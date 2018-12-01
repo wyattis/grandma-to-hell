@@ -7,9 +7,10 @@ module.exports = {
   entry: {
     main: './src/index.js'
   },
+  mode: 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'grandma-to-hell.[chunkhash].bundle.js'
+    filename: 'grandma-to-hell.[name].[chunkhash].js'
   },
   optimization: {
     splitChunks: {
@@ -20,10 +21,17 @@ module.exports = {
   devServer: {
     contentBase: './dist'
   },
+  resolve: {
+    extensions: ['.js']
+  },
   module: {
     rules: [{
       test: [ /\.vert$/, /\.frag$/ ],
       use: 'raw-loader'
+    }, {
+      test: /\.json$/,
+      type: 'javascript/auto',
+      use: 'file-loader'
     }, {
       test: /\.(png|jpg|gif|mp4|mp3|ogg|webm)$/,
       use: 'file-loader'
