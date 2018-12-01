@@ -2,6 +2,7 @@ import Player from '../characters/Player'
 import WheelchairGrandma from '../characters/WheelchairGrandma'
 import FatGrandma from "../characters/FatGrandma";
 import OxygenGrandma from "../characters/OxygenGrandma";
+import CacheKeys from '../types/CacheKeys'
 
 export default class NursingHome extends Phaser.Scene {
   constructor () {
@@ -17,20 +18,18 @@ export default class NursingHome extends Phaser.Scene {
   }
 
   preload () {
-    this.load.image('environment', require('../assets/grandmabgtiles.png'))
+    this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
     const levelUrl = require('../levels/test-1.json')
     this.load.tilemapTiledJSON('map', levelUrl)
     // this.load.image('player', require('../assets/kid.png'))
-    this.load.spritesheet('grandmas', require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 32})
+    this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
+    this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 32, frameHeight: 32})
+    this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
+    this.load.spritesheet(CacheKeys.wheelieMovin, require('../assets/wheeliemovin.png'), {frameWidth: 32, frameHeight: 32})
   }
 
   create () {
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
-    const grandmas = this.physics.add.group({ allowGravity: false })
-    grandmas.add(new WheelchairGrandma(this, 200, 20), true)
-    grandmas.add(new FatGrandma(this, 250, 20), true)
-    grandmas.add(new OxygenGrandma(this, 300, 20), true)
-
     const map = this.make.tilemap({ key: 'map'})
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
@@ -40,21 +39,20 @@ export default class NursingHome extends Phaser.Scene {
     const firesLayer = map.createDynamicLayer('Fire', environment, 0, 0)
 
     for (let layer of [backgroundLayer, wallsLayer, firesLayer]) {
-      layer.setScale(2, 2)
+      // layer.setScale(2, 2)
     }
 
-    // const walls = this.physics.add.staticGroup({
-    //   key: 'wall',
-    //   frameQuantity: 100,
-    //   setXY: { x: 0, y: 400, stepX: 32 },
-    //   frictionX: 1
-    // })
+    const grandmas = this.physics.add.staticGroup({ allowGravity: false })
+    grandmas.add(new WheelchairGrandma(this, 200, 64))
+    grandmas.add(new FatGrandma(this, 250, 64))
+    grandmas.add(new OxygenGrandma(this, 300, 64))
 
     // Player
     this.player = new Player(this, 50, 20)
     this.player.setCollideWorldBounds(true)
 
     // Colliders
+    this.physics.add.collider(this.player, grandmas)
     this.physics.add.collider(grandmas, wallsLayer)
     this.physics.add.collider(this.player, wallsLayer)
 

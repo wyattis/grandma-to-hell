@@ -1,12 +1,17 @@
 import Base from './Base'
+import CacheKeys from "../types/CacheKeys";
+export const OxygenAnimKeys = {
+  sitting: 'oxygen-sitting',
+  moving: 'oxygen-moving'
+}
 export default class OxygenGrandma extends Base {
   constructor (scene, x, y) {
     super(scene, x, y)
     scene.anims.create({
-      key: 'oxygen-sitting',
-      frames: scene.anims.generateFrameNumbers('grandmas', { start: 6, end: 7 }),
+      key: OxygenAnimKeys.sitting,
+      frames: scene.anims.generateFrameNumbers(CacheKeys.grandmas, { start: 6, end: 7 }),
       frameRate: 20
     })
-    this.play('oxygen-sitting')
+    this.play(OxygenAnimKeys.sitting)
   }
 }
