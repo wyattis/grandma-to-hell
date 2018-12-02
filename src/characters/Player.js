@@ -21,7 +21,7 @@ export default class Player extends Base {
       frameRate: 1
     })
     this.play(PlayerAnimKeys.standing)
-    this.setSize(16, 16);
+    // this.setSize(16, 16);
   }
 
   right () {

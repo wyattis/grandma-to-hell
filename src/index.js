@@ -6,19 +6,21 @@ const config = {
   type: Phaser.AUTO,
   parent: 'grandma-from-hell',
   transparent: true,
-  scale: {
-    mode: Phaser.DOM.CONTAIN,
-    width: 800,
-    height: 600,
-    min: {
-      width: 800,
-      height: 600
-    },
-    max: {
-      width: 1600,
-      height: 1200
-    }
-  },
+  width: 800,
+  height: 600,
+  // scale: {
+  //   mode: Phaser.DOM.CONTAIN,
+  //   width: 800,
+  //   height: 600,
+  //   min: {
+  //     width: 800,
+  //     height: 600
+  //   },
+  //   max: {
+  //     width: 1600,
+  //     height: 1200
+  //   }
+  // },
   pixelArt: true,
   scene: [Splash, NursingHome],
   // scale: {x: 2, y: 2},
