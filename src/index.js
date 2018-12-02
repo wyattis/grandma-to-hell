@@ -11,11 +11,11 @@ const game = new Phaser.Game({
   width: config.tileSize * 22 * config.zoom,
   height: config.tileSize * 14 * config.zoom,
   pixelArt: true,
-  // plugins: {
-  //   global: [
-  //     { key: 'TilemapAnimationPlugin', plugin: TilemapAnimationPlugin, start: true, mapping: 'tilemapAnimation' }
-  //   ]
-  // },
+  plugins: {
+    scene: [
+      { key: 'tilemapAnimation', plugin: TilemapAnimationPlugin, mapping: 'tilemap' }
+    ]
+  },
   scene: [Splash, NursingHome],
   // scale: {x: 2, y: 2},
   // scaleMode: 1 // 0: exact, 1: fill, 2: contain, 3: resize

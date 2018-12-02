@@ -7,5 +7,6 @@ export default {
   kid: 'kid',
   boomMa: 'boom-ma',
   bigMaBall: 'big-ma-ball',
-  bigMaBounce: 'big-ma-bounce'
+  bigMaBounce: 'big-ma-bounce',
+  fires: 'fires'
 }

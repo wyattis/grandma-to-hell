@@ -32,6 +32,9 @@ export default class NursingHome extends Phaser.Scene {
     this.load.spritesheet(CacheKeys.bigMaBounce, require('../assets/bigmabounce.png'), {frameWidth: 47, frameHeight: 37})
     this.load.spritesheet(CacheKeys.bigMaBall, require('../assets/bigmaball.png'), {frameWidth: 47, frameHeight: 37})
     this.load.spritesheet(CacheKeys.kid, require('../assets/kid.png'), {frameWidth: 38, frameHeight: 37})
+    this.load.spritesheet(CacheKeys.fires, require('../assets/fires.png'), {frameWidth: 16, frameHeight: 16})
+
+    // TODO: HUD stuff
 
   }
 
@@ -42,12 +45,16 @@ export default class NursingHome extends Phaser.Scene {
     const map = this.make.tilemap({ key: 'map' })
     this.cameras.main.setBounds(0, 0, map.widthInPixels + xPadding * 2, map.heightInPixels + yPadding * 2)
     this.physics.world.setBounds(xPadding, yPadding, map.widthInPixels + xPadding, map.heightInPixels + yPadding)
-    const environment = map.addTilesetImage('background', 'environment')
+    const environment = map.addTilesetImage('background', CacheKeys.env)
+    const fires = map.addTilesetImage('fires', CacheKeys.fires)
     map.createStaticLayer('Background1', environment, xPadding, yPadding)
     map.createStaticLayer('Background2', environment, xPadding, yPadding)
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
-    const fires = map.createStaticLayer('Fire', environment, xPadding, yPadding)
-    const breakableWalls = map.createStaticLayer('Breakable walls', environment, xPadding, yPadding)
+    const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
+
+    this.nowAddFire(firesLayer)
+
+    const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
     const doors = map.createStaticLayer('Doors', environment, xPadding, yPadding)
     this.grandmas = this.physics.add.group({ allowGravity: true, immovable: false })
     this.grandmas.add(new WalkerGrandma(this, 125, 0), true)
@@ -60,8 +67,12 @@ export default class NursingHome extends Phaser.Scene {
 
     // Colliders
     wallsLayer.setCollisionBetween(0, 200)
+    firesLayer.setCollisionBetween(0, 200)
     this.physics.add.collider(this.grandmas, wallsLayer)
     this.physics.add.collider(this.player, wallsLayer)
+    this.physics.add.overlap(this.player, firesLayer, function (s1, s2) {
+      // s1.damage(0.1)
+    })
     this.physics.add.overlap(this.player, this.grandmas, function (s1, s2) {
       if (s1.body.velocity.y > 0 && s1.body.overlapY < 5 && s1.body.bottom <= s2.body.top + s1.body.overlapY) {
         // console.log(s1.body.bottom, s2.body.top)
@@ -90,6 +101,42 @@ export default class NursingHome extends Phaser.Scene {
     this.physics.world.on('worldbounds', function (body) {
       body.gameObject.toggleFlipX()
     })
+
+  }
+
+  nowAddFire (firesLayer) {
+    const fireFps = 8
+    let groups = [
+      [0, 4, 8],
+      [1, 5, 9],
+      [2, 6, 10],
+      [3, 7, 11],
+
+      [12, 16, 20],
+      [13, 17, 21],
+      [14, 18, 22],
+      [15, 19, 23],
+
+      [24, 25, 26],
+      [28, 29, 30],
+
+      [36, 37, 38],
+      [40, 41, 42],
+
+      [48, 49, 50],
+      [52, 53, 54],
+
+      [60, 61, 62],
+      [64, 65, 66]
+    ]
+    for (let group of groups) {
+      this.tilemap.addLayerAnimation(firesLayer, group.map(i => ({
+        key: CacheKeys.fires,
+        frame: i
+      })), fireFps, function (frame) {
+        return group.indexOf(frame.frame) > -1
+      })
+    }
   }
 
   setupInput () {

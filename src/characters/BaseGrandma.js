@@ -2,6 +2,8 @@ import Base from './Base'
 export default class BaseGrandma extends Base {
   constructor (scene, x, y, key) {
     super(scene, x, y, key)
+    scene.physics.add.existing(this)
+    this.setCollideWorldBounds(true)
     this.body.onWorldBounds = true
   }
 

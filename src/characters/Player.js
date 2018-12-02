@@ -28,6 +28,9 @@ export const PlayerState = {
 export default class Player extends Base {
   constructor (scene, x, y) {
     super(scene, x, y)
+    this.createAnims(scene)
+    this.setSize(19, 26)
+    this.setCollideWorldBounds(true)
     // Config
     this.groundAcc = 1000
     this.jumpSpeed = 250
@@ -39,11 +42,9 @@ export default class Player extends Base {
     this.isThrowing = false
     this.isCarrying = false
     this.canThrowOrLift = true
-    this.createAnims(scene)
     this.setState(PlayerState.standing)
-    this.setSize(19, 26)
+    this.on('animationcomplete', this.animComplete, this)
     this.setDragX(300)
-    this.on('animationcomplete', this.animComplete, this);
   }
 
   createAnims (scene) {
