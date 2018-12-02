@@ -69,9 +69,10 @@ export default class NursingHome extends Phaser.Scene {
     wallsLayer.setCollisionBetween(0, 200)
     firesLayer.setCollisionBetween(0, 200)
     this.physics.add.collider(this.grandmas, wallsLayer)
-    this.physics.add.collider(this.player, wallsLayer)
-    this.physics.add.overlap(this.player, firesLayer, function (s1, s2) {
+    this.physics.add.collider([this.player], wallsLayer)
+    this.physics.add.overlap([this.player], firesLayer, function (s1, s2) {
       // s1.damage(0.1)
+      // console.log(s1, s2)
     })
     this.physics.add.overlap(this.player, this.grandmas, function (s1, s2) {
       if (s1.body.velocity.y > 0 && s1.body.overlapY < 5 && s1.body.bottom <= s2.body.top + s1.body.overlapY) {
