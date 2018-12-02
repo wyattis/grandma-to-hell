@@ -9,5 +9,6 @@ export default class FatGrandma extends Base {
       frameRate: 20
     })
     this.play('fat-sitting')
+    this.setSize(32, 50)
   }
 }

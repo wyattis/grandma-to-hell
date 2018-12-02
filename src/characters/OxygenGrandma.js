@@ -9,7 +9,7 @@ export default class OxygenGrandma extends Base {
     super(scene, x, y)
     scene.anims.create({
       key: OxygenAnimKeys.sitting,
-      frames: scene.anims.generateFrameNumbers(CacheKeys.grandmas, { start: 6, end: 7 }),
+      frames: scene.anims.generateFrameNumbers(CacheKeys.boomMa, {start: 0, end: 8}),
       frameRate: 20
     })
     this.play(OxygenAnimKeys.sitting)

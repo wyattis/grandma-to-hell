@@ -4,6 +4,7 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     // Enable drawing and physics
     scene.add.existing(this)
     scene.physics.add.existing(this)
+    this.setCollideWorldBounds(true)
     // this.setScale(2, 2)
   }
 }

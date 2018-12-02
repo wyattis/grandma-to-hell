@@ -23,9 +23,12 @@ export default class NursingHome extends Phaser.Scene {
     this.load.tilemapTiledJSON('map', levelUrl)
     // this.load.image('player', require('../assets/kid.png'))
     this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
-    this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 32, frameHeight: 32})
+    this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
     this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
-    this.load.spritesheet(CacheKeys.wheelieMovin, require('../assets/wheeliemovin.png'), {frameWidth: 32, frameHeight: 32})
+    this.load.spritesheet(CacheKeys.wheelieMovin, require('../assets/wheeliemovin.png'), {frameWidth: 29, frameHeight: 27})
+    this.load.spritesheet(CacheKeys.boomMa, require('../assets/boom-ma.png'), {frameWidth: 34, frameHeight: 31})
+    this.load.spritesheet(CacheKeys.bigMaBounce, require('../assets/bigmabounce.png'), {frameWidth: 47, frameHeight: 37})
+    this.load.spritesheet(CacheKeys.bigMaBall, require('../assets/bigmaball.png'), {frameWidth: 47, frameHeight: 37})
   }
 
   create () {
@@ -49,7 +52,6 @@ export default class NursingHome extends Phaser.Scene {
 
     // Player
     this.player = new Player(this, 50, 20)
-    this.player.setCollideWorldBounds(true)
 
     // Colliders
     this.physics.add.collider(this.player, grandmas)

@@ -18,6 +18,7 @@ export default class WheelchairGrandma extends Base {
       frames: [{key: CacheKeys.wheelieMovin}]
     })
     this.play(WheelieAnimKeys.sitting)
+    this.setSize(16, 24)
   }
 
   preUpdate (time, delta) {

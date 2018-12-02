@@ -17,11 +17,11 @@ export default class Player extends Base {
     // this.body.maxVelocity.y = 100
     scene.anims.create({
       key: PlayerAnimKeys.standing,
-      frames: scene.anims.generateFrameNumbers(CacheKeys.grandmas, { start: 0, end: 0 }),
+      frames: scene.anims.generateFrameNumbers(CacheKeys.walker, { start: 0, end: 0 }),
       frameRate: 1
     })
     this.play(PlayerAnimKeys.standing)
-    // this.setSize(16, 16);
+    this.setSize(16, 32);
   }
 
   right () {

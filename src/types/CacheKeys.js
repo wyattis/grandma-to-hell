@@ -4,5 +4,8 @@ export default {
   walker: 'walker',
   wheelieMovin: 'wheelie-movin',
   env: 'environment',
-  kid: 'kid'
+  kid: 'kid',
+  boomMa: 'boom-ma',
+  bigMaBall: 'big-ma-ball',
+  bigMaBounce: 'big-ma-bounce'
 }
