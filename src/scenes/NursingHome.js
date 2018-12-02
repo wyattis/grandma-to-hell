@@ -10,7 +10,7 @@ export default class NursingHome extends Phaser.Scene {
       key: 'NursingHome',
       physics: {
         arcade: {
-          gravity: { y: 300 },
+          gravity: { y: 500 },
           debug: true
         }
       }
@@ -29,6 +29,7 @@ export default class NursingHome extends Phaser.Scene {
     this.load.spritesheet(CacheKeys.boomMa, require('../assets/boom-ma.png'), {frameWidth: 34, frameHeight: 31})
     this.load.spritesheet(CacheKeys.bigMaBounce, require('../assets/bigmabounce.png'), {frameWidth: 47, frameHeight: 37})
     this.load.spritesheet(CacheKeys.bigMaBall, require('../assets/bigmaball.png'), {frameWidth: 47, frameHeight: 37})
+    this.load.spritesheet(CacheKeys.kid, require('../assets/kid.png'), {frameWidth: 19, frameHeight: 26})
   }
 
   create () {
@@ -41,43 +42,53 @@ export default class NursingHome extends Phaser.Scene {
     const wallsLayer = map.createStaticLayer('Walls', environment, 0, 0)
     const firesLayer = map.createDynamicLayer('Fire', environment, 0, 0)
 
-    for (let layer of [backgroundLayer, wallsLayer, firesLayer]) {
-      // layer.setScale(2, 2)
-    }
 
-    const grandmas = this.physics.add.staticGroup({ allowGravity: false })
-    grandmas.add(new WheelchairGrandma(this, 200, 64))
-    grandmas.add(new FatGrandma(this, 250, 64))
-    grandmas.add(new OxygenGrandma(this, 300, 64))
+    this.grandmas = this.physics.add.group({ allowGravity: true, immovable: true })
+    this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
+    this.grandmas.add(new FatGrandma(this, 250, 0), true)
+    this.grandmas.add(new OxygenGrandma(this, 300, 0), true)
 
     // Player
     this.player = new Player(this, 50, 20)
 
     // Colliders
-    this.physics.add.collider(this.player, grandmas)
-    this.physics.add.collider(grandmas, wallsLayer)
+    wallsLayer.setCollisionBetween(0, 100)
+    this.physics.add.collider(this.grandmas, wallsLayer)
     this.physics.add.collider(this.player, wallsLayer)
+    this.physics.add.collider(this.player, this.grandmas)
 
     // Register input
     this.cursors = this.input.keyboard.createCursorKeys()
+    this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
     // Camera stuff
     this.cameras.main.startFollow(this.player, true)
-    this.cameras.main.setDeadzone(400, 200)
+    this.cameras.main.setDeadzone(400 / 4, 200 / 4)
+    this.cameras.main.setZoom(4)
+
+    this.physics.world.on('worldbounds', function (body) {
+      body.gameObject.toggleFlipX()
+    })
   }
 
   update () {
+    this.physics.world.collide(this.player, this.grandmas)
     if (this.cursors.right.isDown) {
       this.player.right()
-    }
-    if (this.cursors.left.isDown) {
+    } else if (this.cursors.left.isDown) {
       this.player.left()
+    } else {
+      this.player.stop()
     }
-    if (this.cursors.up.isDown) {
+    if (this.spacebar.isDown) {
+      this.player.jump()
+    } else {
+      this.player.stopJump()
+    }
+    if (this.cursors.down.isDown && this.player.body.blocked.down) {
       // TODO: Open doors or interact
-    }
-    if (this.cursors.down.isDown) {
-      // TODO: Duck?
+      debugger
+      if (this.player.intersects());
     }
   }
 }
