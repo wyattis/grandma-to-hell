@@ -11,6 +11,6 @@ export default class FatGrandma extends BaseGrandma {
       repeat: -1
     })
     this.play('fat-sitting')
-    this.setSize(32, 50)
+    // this.setSize(32, 50)
   }
 }

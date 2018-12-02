@@ -17,7 +17,7 @@ export default class Player extends Base {
     this.jumpSpeed = 250
     this.airDrag = 100
     this.groundDrag = 300
-    this.body.maxVelocity.x = 200
+    // this.body.maxVelocity.x = 200
     scene.anims.create({
       key: PlayerAnimKeys.standing,
       frames: scene.anims.generateFrameNumbers(CacheKeys.kid, { start: 0, end: 0 }),
@@ -29,22 +29,22 @@ export default class Player extends Base {
       frameRate: 1
     })
     this.play(PlayerAnimKeys.standing)
-    this.setSize(19, 26)
-    this.setDragX(300)
+    // this.setSize(19, 26)
+    // this.setDragX(300)
   }
 
-  preUpdate () {
-    console.log(this.body.blocked.down, this.body.touching.down)
-    if (this.body.blocked.right || this.body.blocked.left) {
-      this.setAccelerationX(0)
-    }
-    if (this.body.blocked.up || this.body.blocked.down) {
-      this.setAccelerationY(0)
-      if (this.body.blocked.down) {
-        this.setDragX(this.groundDrag)
-      }
-    }
-  }
+  // preUpdate () {
+  //   console.log(this.body.blocked.down, this.body.touching.down)
+  //   if (this.body.blocked.right || this.body.blocked.left) {
+  //     this.setAccelerationX(0)
+  //   }
+  //   if (this.body.blocked.up || this.body.blocked.down) {
+  //     this.setAccelerationY(0)
+  //     if (this.body.blocked.down) {
+  //       this.setDragX(this.groundDrag)
+  //     }
+  //   }
+  // }
 
   lift (grandma) {
 
@@ -59,7 +59,7 @@ export default class Player extends Base {
   }
 
   stop() {
-    this.setAccelerationX(0)
+    // this.setAccelerationX(0)
   }
 
   jump (timestamp) {
@@ -72,8 +72,8 @@ export default class Player extends Base {
   }
 
   stopJump () {
-    if (this.body.blocked.down || this.body.touching.down) {
-      this.isHoldingJump = false
-    }
+    // if (this.body.blocked.down || this.body.touching.down) {
+    //   this.isHoldingJump = false
+    // }
   }
 }

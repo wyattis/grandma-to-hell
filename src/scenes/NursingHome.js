@@ -9,9 +9,10 @@ export default class NursingHome extends Phaser.Scene {
     super({
       key: 'NursingHome',
       physics: {
-        arcade: {
-          gravity: { y: 500 },
-          debug: true
+        matter: {
+          debug: true,
+          gravity: { y: 1 },
+          enableSleep: true
         }
       }
     })
@@ -35,27 +36,34 @@ export default class NursingHome extends Phaser.Scene {
   create () {
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
     const map = this.make.tilemap({ key: 'map'})
-    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
     const environment = map.addTilesetImage('background', 'environment')
     const backgroundLayer = map.createStaticLayer('Background', environment, 0, 0)
-    const wallsLayer = map.createStaticLayer('Walls', environment, 0, 0)
+    const wallsLayer = map.createDynamicLayer('Walls', environment, 0, 0)
     const firesLayer = map.createDynamicLayer('Fire', environment, 0, 0)
 
+    // Physics setup
+    this.matter.world.createDebugGraphic()
+    this.matter.world.drawDebug = true
+    wallsLayer.setCollisionByProperty({ collides: true })
+    this.matter.world.convertTilemapLayer(wallsLayer)
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
+    this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
+    wallsLayer.forEachTile(tile => {
+      if (tile.physics.matterBody) {
+        debugger
+      }
+    })
+    // this.physics.add.collider(this.grandmas, wallsLayer)
+    // this.physics.add.collider(this.player, this.grandmas)
 
-    this.grandmas = this.physics.add.group({ allowGravity: true, immovable: true })
+    this.grandmas = this.add.group()
     this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
     this.grandmas.add(new FatGrandma(this, 250, 0), true)
     this.grandmas.add(new OxygenGrandma(this, 300, 0), true)
 
     // Player
     this.player = new Player(this, 50, 20)
-
-    // Colliders
-    wallsLayer.setCollisionBetween(0, 100)
-    this.physics.add.collider(this.grandmas, wallsLayer)
-    this.physics.add.collider(this.player, wallsLayer)
-    this.physics.add.collider(this.player, this.grandmas)
+    debugger
 
     // Register input
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -64,15 +72,10 @@ export default class NursingHome extends Phaser.Scene {
     // Camera stuff
     this.cameras.main.startFollow(this.player, true)
     this.cameras.main.setDeadzone(400 / 4, 200 / 4)
-    this.cameras.main.setZoom(4)
-
-    this.physics.world.on('worldbounds', function (body) {
-      body.gameObject.toggleFlipX()
-    })
+    this.cameras.main.setZoom(2)
   }
 
   update () {
-    this.physics.world.collide(this.player, this.grandmas)
     if (this.cursors.right.isDown) {
       this.player.right()
     } else if (this.cursors.left.isDown) {
@@ -85,10 +88,8 @@ export default class NursingHome extends Phaser.Scene {
     } else {
       this.player.stopJump()
     }
-    if (this.cursors.down.isDown && this.player.body.blocked.down) {
+    if (this.cursors.down.isDown) {
       // TODO: Open doors or interact
-      debugger
-      if (this.player.intersects());
     }
   }
 }

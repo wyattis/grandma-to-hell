@@ -20,7 +20,7 @@ export default class WheelchairGrandma extends BaseGrandma {
       repeat: -1
     })
     this.play(WheelieAnimKeys.sitting)
-    this.setSize(16, 24)
+    // this.setSize(16, 24)
   }
 
   setBrake (val) {
