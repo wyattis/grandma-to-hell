@@ -1,31 +1,23 @@
 import 'phaser'
 import Splash from "./scenes/Splash"
-import NursingHome from "./scenes/NursingHome";
+import NursingHome from "./scenes/NursingHome"
+import config from './config'
+import TilemapAnimationPlugin from './plugins/TilemapAnimationPlugin'
 
-const config = {
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'grandma-from-hell',
-  transparent: true,
-  width: 800,
-  height: 600,
-  // scale: {
-  //   mode: Phaser.DOM.CONTAIN,
-  //   width: 800,
-  //   height: 600,
-  //   min: {
-  //     width: 800,
-  //     height: 600
-  //   },
-  //   max: {
-  //     width: 1600,
-  //     height: 1200
-  //   }
-  // },
+  // transparent: true,
+  width: config.tileSize * 22 * config.zoom,
+  height: config.tileSize * 14 * config.zoom,
   pixelArt: true,
+  // plugins: {
+  //   global: [
+  //     { key: 'TilemapAnimationPlugin', plugin: TilemapAnimationPlugin, start: true, mapping: 'tilemapAnimation' }
+  //   ]
+  // },
   scene: [Splash, NursingHome],
   // scale: {x: 2, y: 2},
   // scaleMode: 1 // 0: exact, 1: fill, 2: contain, 3: resize
-}
-
-const game = new Phaser.Game(config)
+})
 

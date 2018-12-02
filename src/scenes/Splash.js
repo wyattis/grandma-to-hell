@@ -20,6 +20,6 @@ export default class Splash extends Phaser.Scene {
     })
     setTimeout(() => {
       this.scene.start('NursingHome')
-    }, 500)
+    })
   }
 }
