@@ -11,7 +11,10 @@ export default class HUD extends Phaser.Scene {
   }
 
   create () {
-    const mute = this.add.sprite(config.tileSize * config.zoom * (config.width - .5), config.tileSize * config.zoom, 'mute', 0).setInteractive()
+    const mute = this.add.sprite(config.tileSize * 3, config.tileSize * 3, 'mute', 0)
+      .setInteractive()
+      .setScrollFactor(0)
+    this.scene.bringToTop();
     mute.on('pointerdown', () => {
       if (!this.sound.mute) {
         mute.setFrame(1)

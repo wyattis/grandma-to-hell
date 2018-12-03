@@ -22,13 +22,15 @@ export default class NursingHome extends Phaser.Scene {
 
   init (data) {
     this.room = data.room
-    this.roomFile = rooms[data.room - 1]
+    this.roomKey = `room-${this.room}`
+    this.roomFile = rooms[data.room]
+    console.log('initializing room', this.roomFile, this.room)
   }
 
   preload () {
     console.log('preload args', arguments)
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
-    this.load.tilemapTiledJSON('map', this.roomFile)
+    this.load.tilemapTiledJSON(this.roomKey, this.roomFile)
     // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
     this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
     this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
@@ -43,12 +45,17 @@ export default class NursingHome extends Phaser.Scene {
   }
 
   create () {
+    setTimeout(() => {
+      this.scene.start('RoomTransition', {
+        room: this.room + 1
+      })
+    }, 3000)
     // Launch the HUD
     this.scene.launch('HUD')
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
     const yPadding = config.tileSize * 2
     const xPadding = 0 // config.tileSize * 2
-    const map = this.make.tilemap({ key: 'map' })
+    const map = this.make.tilemap({ key: this.roomKey })
     this.cameras.main.setBounds(0, 0, map.widthInPixels + xPadding * 2, map.heightInPixels + yPadding * 2)
     this.physics.world.setBounds(xPadding, yPadding, map.widthInPixels + xPadding, map.heightInPixels + yPadding)
     const environment = map.addTilesetImage('background', CacheKeys.env)
@@ -57,11 +64,12 @@ export default class NursingHome extends Phaser.Scene {
     map.createStaticLayer('Background2', environment, xPadding, yPadding)
     map.createStaticLayer('Foreground', environment, xPadding, yPadding)
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
+    const doorsLayer = map.createStaticLayer('Doors', environment, xPadding, yPadding)
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
-    this.initDoors(map, xPadding, yPadding)
+    this.initDoors(doorsLayer, xPadding, yPadding)
     this.addCharacters(map, xPadding, yPadding)
-
+    
     const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
     this.nowAddFire(firesLayer)
 
@@ -109,6 +117,10 @@ export default class NursingHome extends Phaser.Scene {
         s2.body.blocked.down = true
       }
     })
+    // Doors
+    this.physics.add.overlap(this.player, this.doors, function (player, door) {
+      player.interactable = door
+    })
 
     this.setupInput()
 
@@ -123,18 +135,38 @@ export default class NursingHome extends Phaser.Scene {
 
   }
 
-  initDoors (map, xPadding, yPadding) {
+  initDoors (doorLayer, xPadding, yPadding) {
     let n = 0
-    this.doors = this.add.group()
-    const layer = map.getLayer('Doors')
-    for (let row of layer.data) {
+    this.doors = this.physics.add.group()
+    const doorKeys = []
+    for (let key in doorLayer.layer.properties) {
+      doorKeys.push(doorLayer.layer.properties[key])
+    }
+    console.log('doorKeys', doorKeys)
+    for (let row of doorLayer.layer.data) {
       for (let tile of row) {
         const x = xPadding + tile.pixelX + config.tileSize / 2
         const y = yPadding + tile.pixelY + config.tileSize / 2
-        // TODO: Filter for only bottoms of doors
-        if (tile.index > -1) {
-          // const door = this.add.sprite(x, y, CacheKeys.env, 0)
-          // this.doors.add(door)
+        // TODO: Filter for only tops of doors
+        if (tile.index > -1) console.log('door index', tile.index)
+        if (tile.index === 145 || tile.index === 182) {
+          const door = this.add.zone(tile.pixelX, tile.pixelY + config.tileSize * 2).setSize(16, 32)
+          this.physics.world.enable(door)
+          door.body.setAllowGravity(false)
+          door.body.moves = false
+          this.doors.add(door)
+          if (n < doorKeys.length) {
+            door.leadsTo = doorKeys[n]
+            console.log('assiging key', door.leadsTo)
+            door.interact = ((door) => (() => {
+              console.log('changing scene to', door.leadsTo)
+              this.scene.restart({
+                room: door.leadsTo
+              })
+            }))(door)
+          } else {
+            console.error('Not enough door keys added', n)
+          }
           n++
         }
       }
@@ -197,12 +229,9 @@ export default class NursingHome extends Phaser.Scene {
             this.grandmas.add(new FatGrandma(this, x, y), true)
             break
           case 194:
-            this.player = new Player(this, x, y)
-            this.player.flipX = false
-            break
           case 195:
             this.player = new Player(this, x, y)
-            this.player.flipX = true
+            this.player.flipX = tile.index === 195
             break
           default:
             if (tile.index > 0) debugger

@@ -39,6 +39,16 @@
          "height":30,
          "name":"Doors",
          "opacity":1,
+         "properties":
+            {
+             "door1":"1",
+             "door2":"0"
+            },
+         "propertytypes":
+            {
+             "door1":"string",
+             "door2":"string"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":100,

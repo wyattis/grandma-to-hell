@@ -19,7 +19,11 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './dist'
+    contentBase: './dist',
+     host: '0.0.0.0',
+     allowedHosts: [
+      'grandma-to-hell-mereswine.c9users.io'
+    ]
   },
   resolve: {
     extensions: ['.js', '.json']

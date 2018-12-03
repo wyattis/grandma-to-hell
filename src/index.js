@@ -2,6 +2,7 @@ import 'phaser'
 import Splash from "./scenes/Splash"
 import NursingHome from "./scenes/NursingHome"
 import HUD from "./scenes/HUD"
+import RoomTransition from "./scenes/RoomTransition"
 import config from './config'
 import TilemapAnimationPlugin from './plugins/TilemapAnimationPlugin'
 
@@ -17,7 +18,7 @@ const game = new Phaser.Game({
       { key: 'tilemapAnimation', plugin: TilemapAnimationPlugin, mapping: 'tilemap' }
     ]
   },
-  scene: [Splash, HUD, NursingHome],
+  scene: [Splash, HUD, NursingHome, RoomTransition],
   // scale: {x: 2, y: 2},
   // scaleMode: 1 // 0: exact, 1: fill, 2: contain, 3: resize
 })

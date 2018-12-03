@@ -11,10 +11,11 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
   }
 
   init () {
-    console.log('TilemapAnimationPlugin initialized')
+   console.log('TilemapAnimationPlugin.init')
   }
 
   boot (systems) {
+    console.log('TilemapAnimationPlugin.boot')
     systems.events.on('postupdate', this.postUpdate, this)
     systems.events.on('shutdown', this.shutdown, this)
     systems.events.on('destroy', this.destroy, this)
@@ -47,11 +48,13 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
   }
 
   shutdown () {
+    console.log('TilemapAnimationPlugin.shutdown')
     this.isActive = false
     this.animationLayers = []
   }
 
   destroy () {
+    console.log('TilemapAnimationPlugin.destroy')
     this.animationLayers.length = 0
   }
 

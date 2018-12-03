@@ -27,8 +27,8 @@ export default class Splash extends Phaser.Scene {
     theme.volume = .5
 
     setTimeout(() => {
-      this.scene.start('NursingHome', {
-        room: 1
+      this.scene.start('RoomTransition', {
+        room: 0
       })
     })
   }
