@@ -18,8 +18,7 @@ export default class FatGrandma extends BaseGrandma {
       frames: scene.anims.generateFrameNumbers(CacheKeys.bigMaBounce, { start: 0, end: 0 }),
       frameRate: 1
     })
-    this.setCircle(25)
     this.play(FatAnimKeys.standing)
-    this.setSize(32, 50)
+    this.setSize(32, 32)
   }
 }

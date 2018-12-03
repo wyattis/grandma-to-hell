@@ -28,12 +28,14 @@ export default class WalkerGrandma extends BaseGrandma {
           this.direction = Direction.LEFT
         } else {
           this.x += 1
+          this.body.x += 1
         }
       } else {
         if (this.body.blocked.left || this.body.touching.left) {
           this.direction = Direction.RIGHT
         } else {
           this.x -= 1
+          this.body.x -= 1
         }
       }
     } else if (this.anims.currentFrame.textureFrame !== 0) {

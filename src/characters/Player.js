@@ -29,7 +29,9 @@ export default class Player extends Base {
   constructor (scene, x, y) {
     super(scene, x, y)
     this.createAnims(scene)
+    console.log(this.displayHeight, this.displayWidth)
     this.setSize(19, 26)
+    console.log(this.displayHeight, this.displayWidth)
     this.setCollideWorldBounds(true)
     // Config
     this.groundAcc = 1000
@@ -44,7 +46,6 @@ export default class Player extends Base {
     this.canThrowOrLift = true
     this.setState(PlayerState.standing)
     this.on('animationcomplete', this.animComplete, this)
-    this.setDragX(300)
   }
 
   createAnims (scene) {
@@ -113,7 +114,7 @@ export default class Player extends Base {
   }
 
   animComplete () {
-    console.log('animation complete for', this.state)
+    // console.log('animation complete for', this.state)
     // if (this.state === PlayerState.lifting) {
     //   this.setState(PlayerState.carrying)
     // } else if (this.state === PlayerState.placing) {

@@ -23,8 +23,7 @@ export default class NursingHome extends Phaser.Scene {
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
     const levelUrl = require('../levels/test-1.json')
     this.load.tilemapTiledJSON('map', levelUrl)
-    // this.load.image('player', require('../assets/kid.png'))
-    this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
+    // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
     this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
     this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
     this.load.spritesheet(CacheKeys.wheelieMovin, require('../assets/wheeliemovin.png'), {frameWidth: 29, frameHeight: 27})
@@ -33,15 +32,15 @@ export default class NursingHome extends Phaser.Scene {
     this.load.spritesheet(CacheKeys.bigMaBall, require('../assets/bigmaball.png'), {frameWidth: 47, frameHeight: 37})
     this.load.spritesheet(CacheKeys.kid, require('../assets/kid.png'), {frameWidth: 38, frameHeight: 37})
     this.load.spritesheet(CacheKeys.fires, require('../assets/fires.png'), {frameWidth: 16, frameHeight: 16})
-
-    // TODO: HUD stuff
+    this.load.spritesheet(CacheKeys.explosion, require('../assets/explosion.png'), {frameWidth: 42, frameHeight: 43})
+    this.load.image(CacheKeys.ashes, require('../assets/ashes.png'))
 
   }
 
   create () {
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
-    const yPadding = config.tileSize * 2
-    const xPadding = 0 //config.tileSize * 2
+    const yPadding = 0 // config.tileSize * 2
+    const xPadding = 0 // config.tileSize * 2
     const map = this.make.tilemap({ key: 'map' })
     this.cameras.main.setBounds(0, 0, map.widthInPixels + xPadding * 2, map.heightInPixels + yPadding * 2)
     this.physics.world.setBounds(xPadding, yPadding, map.widthInPixels + xPadding, map.heightInPixels + yPadding)
@@ -50,9 +49,6 @@ export default class NursingHome extends Phaser.Scene {
     map.createStaticLayer('Background1', environment, xPadding, yPadding)
     map.createStaticLayer('Background2', environment, xPadding, yPadding)
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
-    const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
-
-    this.nowAddFire(firesLayer)
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
     const doors = map.createStaticLayer('Doors', environment, xPadding, yPadding)
@@ -60,35 +56,48 @@ export default class NursingHome extends Phaser.Scene {
     this.grandmas.add(new WalkerGrandma(this, 125, 0), true)
     this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
     this.grandmas.add(new FatGrandma(this, 250, 0), true)
-    this.grandmas.add(new OxygenGrandma(this, 300, 0), true)
+    this.grandmas.add(new OxygenGrandma(this, 50, 0), true)
 
     // Player
     this.player = new Player(this, 50, 20)
+
+    const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
+    this.nowAddFire(firesLayer)
 
     // Colliders
     wallsLayer.setCollisionBetween(0, 200)
     firesLayer.setCollisionBetween(0, 200)
     this.physics.add.collider(this.grandmas, wallsLayer)
     this.physics.add.collider([this.player], wallsLayer)
-    this.physics.add.overlap([this.player], firesLayer, function (s1, s2) {
-      // s1.damage(0.1)
-      // console.log(s1, s2)
-    })
+    function fireDamage (s1, s2) {
+      if (s2.index > -1){
+        s1.damage(0.1)
+      }
+    }
+    this.physics.add.overlap(firesLayer, this.player, fireDamage)
+    this.physics.add.overlap(firesLayer, this.grandmas, fireDamage)
     this.physics.add.overlap(this.player, this.grandmas, function (s1, s2) {
-      if (s1.body.velocity.y > 0 && s1.body.overlapY < 5 && s1.body.bottom <= s2.body.top + s1.body.overlapY) {
+      // console.log('grandma overlap', s1, s2)
+      if (s1.body.velocity.y > 0 && s1.body.bottom <= s2.body.top + 5) {
         // console.log(s1.body.bottom, s2.body.top)
         // if (s1.body.velocity.x < 0) debugger
         s1.body.y += (s2.body.top - s1.body.bottom)
         s1.setVelocityY(0)
+        s1.body.blocked.down = true
       } else if (s2.body.touching.down || s2.body.blocked.down) {
         s1.interactable = s2
       }
     })
     this.physics.add.overlap(this.grandmas, this.grandmas, function (s1, s2) {
       // TODO: Different for each grandma type
-      if (s1.body.velocity.y > 0 && s1.body.overlapY < 5 && s1.body.bottom <= s2.body.top + s1.body.overlapY) {
+      if (s1.body.velocity.y > 0 && s1.body.bottom <= s2.body.top + 5) {
         s1.body.y += (s2.body.top - s1.body.bottom)
         s1.setVelocityY(0)
+        s1.body.blocked.down = true
+      } else if (s2.body.velocity.y > 0 && s2.body.bottom <= s1.body.top + 5) {
+        s2.body.y += (s1.body.top - s2.body.bottom)
+        s2.setVelocityY(0)
+        s2.body.blocked.down = true
       }
     })
 
@@ -96,8 +105,8 @@ export default class NursingHome extends Phaser.Scene {
 
     // Camera stuff
     this.cameras.main.startFollow(this.player, true)
-    this.cameras.main.setDeadzone(400 / 4, 200 / 4)
-    this.cameras.main.setZoom(3)
+    this.cameras.main.setDeadzone(400 / config.zoom, 200 / config.zoom)
+    this.cameras.main.setZoom(config.zoom)
 
     this.physics.world.on('worldbounds', function (body) {
       body.gameObject.toggleFlipX()

@@ -8,5 +8,7 @@ export default {
   boomMa: 'boom-ma',
   bigMaBall: 'big-ma-ball',
   bigMaBounce: 'big-ma-bounce',
-  fires: 'fires'
+  fires: 'fires',
+  explosion: 'explosion',
+  ashes: 'ashes'
 }
