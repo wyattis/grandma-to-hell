@@ -36,6 +36,7 @@ export default class Player extends Base {
     // Config
     this.groundAcc = 1000
     this.jumpSpeed = 250
+    this.bounceSpeed = 400
     this.airDrag = 100
     this.groundDrag = 300
     this.body.maxVelocity.x = 200
@@ -200,8 +201,12 @@ export default class Player extends Base {
     }
   }
 
+  bounce () {
+    this.setVelocityY(-this.bounceSpeed)
+    this.setState(PlayerState.jumpingUp)
+  }
+
   interact (object) {
-    // TODO
     if (object && object.interact) {
       object.interact()
     }

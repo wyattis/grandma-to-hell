@@ -73,9 +73,14 @@ export default class NursingHome extends Phaser.Scene {
       if (s1.body.velocity.y > 0 && s1.body.bottom <= s2.body.top + 5) {
         // console.log(s1.body.bottom, s2.body.top)
         // if (s1.body.velocity.x < 0) debugger
-        s1.body.y += (s2.body.top - s1.body.bottom)
-        s1.setVelocityY(0)
-        s1.body.blocked.down = true
+        if (s2 instanceof FatGrandma) {
+          s1.bounce()
+          s2.bounce()
+        } else {
+          s1.body.y += (s2.body.top - s1.body.bottom)
+          s1.setVelocityY(0)
+          s1.body.blocked.down = true
+        }
       } else if (s2.body.touching.down || s2.body.blocked.down) {
         s1.interactable = s2
       }
@@ -209,7 +214,7 @@ export default class NursingHome extends Phaser.Scene {
       if (this.player.interactable) {
         this.player.interact(this.player.interactable)
       }
-    } else if (!this.canInteract) {
+    } else if (!this.J.isDown) {
       this.canInteract = true
     }
 

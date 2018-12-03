@@ -19,11 +19,11 @@ export default class WheelchairGrandma extends BaseGrandma {
     })
     scene.anims.create({
       key: WheelieAnimKeys.moving,
-      frames: [{key: CacheKeys.wheelieMovin}],
+      frames: scene.anims.generateFrameNumbers(CacheKeys.wheelieMovin, {start: 0, end: 8}),
       frameRate: 20,
       repeat: -1
     })
-    this.speed = 200
+    this.speed = 50
     this.setSize(16, 24)
     this.setState(WheelchairStates.sitting)
   }
