@@ -20,6 +20,7 @@ export default class NursingHome extends Phaser.Scene {
   }
 
   preload () {
+    console.log('preload args', arguments)
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
     const levelUrl = require('../levels/test-2.json')
     this.load.tilemapTiledJSON('map', levelUrl)
@@ -38,7 +39,7 @@ export default class NursingHome extends Phaser.Scene {
 
   create () {
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
-    const yPadding = 0 // config.tileSize * 2
+    const yPadding = config.tileSize * 2
     const xPadding = 0 // config.tileSize * 2
     const map = this.make.tilemap({ key: 'map' })
     this.cameras.main.setBounds(0, 0, map.widthInPixels + xPadding * 2, map.heightInPixels + yPadding * 2)
@@ -47,6 +48,7 @@ export default class NursingHome extends Phaser.Scene {
     const fires = map.addTilesetImage('fires', CacheKeys.fires)
     map.createStaticLayer('Background1', environment, xPadding, yPadding)
     map.createStaticLayer('Background2', environment, xPadding, yPadding)
+    map.createStaticLayer('Foreground', environment, xPadding, yPadding)
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)

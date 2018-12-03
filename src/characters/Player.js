@@ -31,6 +31,8 @@ export default class Player extends Base {
     this.createAnims(scene)
     console.log(this.displayHeight, this.displayWidth)
     this.setSize(19, 26)
+    this.setSizeToFrame()
+    console.log('player', this)
     console.log(this.displayHeight, this.displayWidth)
     this.setCollideWorldBounds(true)
     // Config
