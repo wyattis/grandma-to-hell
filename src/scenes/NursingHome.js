@@ -52,11 +52,7 @@ export default class NursingHome extends Phaser.Scene {
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
     const doors = map.createStaticLayer('Doors', environment, xPadding, yPadding)
-    this.grandmas = this.physics.add.group({ allowGravity: true, immovable: false })
-    this.grandmas.add(new WalkerGrandma(this, 125, 0), true)
-    this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
-    this.grandmas.add(new FatGrandma(this, 250, 0), true)
-    this.grandmas.add(new OxygenGrandma(this, 50, 0), true)
+    this.addGrandmas(map)
 
     // Player
     this.player = new Player(this, 50, 20)
@@ -147,6 +143,15 @@ export default class NursingHome extends Phaser.Scene {
         return group.indexOf(frame.frame) > -1
       })
     }
+  }
+
+  addGrandmas (map) {
+    this.grandmas = this.physics.add.group({ allowGravity: true, immovable: false })
+    const layer = map.getLayer('Grandmas')
+    this.grandmas.add(new WalkerGrandma(this, 125, 0), true)
+    this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
+    this.grandmas.add(new FatGrandma(this, 250, 0), true)
+    this.grandmas.add(new OxygenGrandma(this, 50, 0), true)
   }
 
   setupInput () {
