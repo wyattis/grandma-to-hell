@@ -43,6 +43,8 @@ export default class NursingHome extends Phaser.Scene {
   }
 
   create () {
+    // Launch the HUD
+    this.scene.launch('HUD')
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
     const yPadding = config.tileSize * 2
     const xPadding = 0 // config.tileSize * 2
@@ -80,7 +82,7 @@ export default class NursingHome extends Phaser.Scene {
     this.physics.add.overlap(firesLayer, this.grandmas, fireDamage)
     this.physics.add.overlap(this.player, this.grandmas, function (s1, s2) {
       // console.log('grandma overlap', s1, s2)
-      if (s1.body.velocity.y > 0 && s1.body.bottom <= s2.body.top + 5) {
+      if (s1.body.velocity.y > 0 && s1.body.bottom <= s2.body.top + 10) {
         // console.log(s1.body.bottom, s2.body.top)
         // if (s1.body.velocity.x < 0) debugger
         if (s2 instanceof FatGrandma) {

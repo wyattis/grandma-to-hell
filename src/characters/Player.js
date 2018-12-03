@@ -42,6 +42,7 @@ export default class Player extends Base {
     this.airDrag = 100
     this.groundDrag = 300
     this.body.maxVelocity.x = 200
+    this.body.maxVelocity.y = 400
     this.carryObj = null
     this.interactable = null
     this.isThrowing = false

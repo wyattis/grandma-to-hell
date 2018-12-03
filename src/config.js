@@ -1,4 +1,6 @@
 export default {
   tileSize: 16,
-  zoom: 3
+  zoom: 3,
+  width: 22,
+  height: 14
 }
