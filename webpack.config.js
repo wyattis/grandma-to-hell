@@ -22,7 +22,7 @@ module.exports = {
     contentBase: './dist'
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.json']
   },
   module: {
     rules: [{

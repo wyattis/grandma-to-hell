@@ -5,6 +5,7 @@ import OxygenGrandma from "../characters/OxygenGrandma";
 import CacheKeys from '../types/CacheKeys'
 import WalkerGrandma from "../characters/WalkerGrandma";
 import config from '../config'
+import rooms from '../rooms'
 
 export default class NursingHome extends Phaser.Scene {
   constructor () {
@@ -19,11 +20,15 @@ export default class NursingHome extends Phaser.Scene {
     })
   }
 
+  init (data) {
+    this.room = data.room
+    this.roomFile = rooms[data.room - 1]
+  }
+
   preload () {
     console.log('preload args', arguments)
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
-    const levelUrl = require('../levels/test-2.json')
-    this.load.tilemapTiledJSON('map', levelUrl)
+    this.load.tilemapTiledJSON('map', this.roomFile)
     // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
     this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
     this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
@@ -52,8 +57,8 @@ export default class NursingHome extends Phaser.Scene {
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
-    const doors = map.createStaticLayer('Doors', environment, xPadding, yPadding)
-    this.addCharacters(map)
+    this.initDoors(map, xPadding, yPadding)
+    this.addCharacters(map, xPadding, yPadding)
 
     const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
     this.nowAddFire(firesLayer)
@@ -68,6 +73,9 @@ export default class NursingHome extends Phaser.Scene {
         s1.damage(0.1)
       }
     }
+    this.physics.add.overlap(this.player, this.doors, function (player, door) {
+      player.interactable = door
+    })
     this.physics.add.overlap(firesLayer, this.player, fireDamage)
     this.physics.add.overlap(firesLayer, this.grandmas, fireDamage)
     this.physics.add.overlap(this.player, this.grandmas, function (s1, s2) {
@@ -113,6 +121,24 @@ export default class NursingHome extends Phaser.Scene {
 
   }
 
+  initDoors (map, xPadding, yPadding) {
+    let n = 0
+    this.doors = this.add.group()
+    const layer = map.getLayer('Doors')
+    for (let row of layer.data) {
+      for (let tile of row) {
+        const x = xPadding + tile.pixelX + config.tileSize / 2
+        const y = yPadding + tile.pixelY + config.tileSize / 2
+        // TODO: Filter for only bottoms of doors
+        if (tile.index > -1) {
+          // const door = this.add.sprite(x, y, CacheKeys.env, 0)
+          // this.doors.add(door)
+          n++
+        }
+      }
+    }
+  }
+
   nowAddFire (firesLayer) {
     const fireFps = 8
     let groups = [
@@ -148,13 +174,13 @@ export default class NursingHome extends Phaser.Scene {
     }
   }
 
-  addCharacters (map) {
+  addCharacters (map, xPadding, yPadding) {
     this.grandmas = this.physics.add.group({ allowGravity: true, immovable: false })
     const layer = map.getLayer('Characters')
     for (let x = 0; x < layer.data.length; x++) {
       for (let tile of layer.data[x]) {
-        const x = tile.pixelX + config.tileSize / 2
-        const y = tile.pixelY + config.tileSize / 2
+        const x = xPadding + tile.pixelX + config.tileSize / 2
+        const y = yPadding + tile.pixelY + config.tileSize / 2
         switch (tile.index) {
           case 178:
             this.grandmas.add(new OxygenGrandma(this, x, y), true)
