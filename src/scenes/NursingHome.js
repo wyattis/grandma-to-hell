@@ -21,7 +21,7 @@ export default class NursingHome extends Phaser.Scene {
 
   preload () {
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
-    const levelUrl = require('../levels/test-1.json')
+    const levelUrl = require('../levels/test-2.json')
     this.load.tilemapTiledJSON('map', levelUrl)
     // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
     this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
@@ -34,7 +34,6 @@ export default class NursingHome extends Phaser.Scene {
     this.load.spritesheet(CacheKeys.fires, require('../assets/fires.png'), {frameWidth: 16, frameHeight: 16})
     this.load.spritesheet(CacheKeys.explosion, require('../assets/explosion.png'), {frameWidth: 42, frameHeight: 43})
     this.load.image(CacheKeys.ashes, require('../assets/ashes.png'))
-
   }
 
   create () {
@@ -52,10 +51,7 @@ export default class NursingHome extends Phaser.Scene {
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
     const doors = map.createStaticLayer('Doors', environment, xPadding, yPadding)
-    this.addGrandmas(map)
-
-    // Player
-    this.player = new Player(this, 50, 20)
+    this.addCharacters(map)
 
     const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
     this.nowAddFire(firesLayer)
@@ -101,7 +97,7 @@ export default class NursingHome extends Phaser.Scene {
 
     // Camera stuff
     this.cameras.main.startFollow(this.player, true)
-    this.cameras.main.setDeadzone(400 / config.zoom, 200 / config.zoom)
+    this.cameras.main.setDeadzone(config.tileSize * 4 * config.zoom, config.tileSize * 1.1 * config.zoom)
     this.cameras.main.setZoom(config.zoom)
 
     this.physics.world.on('worldbounds', function (body) {
@@ -145,13 +141,39 @@ export default class NursingHome extends Phaser.Scene {
     }
   }
 
-  addGrandmas (map) {
+  addCharacters (map) {
     this.grandmas = this.physics.add.group({ allowGravity: true, immovable: false })
-    const layer = map.getLayer('Grandmas')
-    this.grandmas.add(new WalkerGrandma(this, 125, 0), true)
-    this.grandmas.add(new WheelchairGrandma(this, 200, 0), true)
-    this.grandmas.add(new FatGrandma(this, 250, 0), true)
-    this.grandmas.add(new OxygenGrandma(this, 50, 0), true)
+    const layer = map.getLayer('Characters')
+    for (let x = 0; x < layer.data.length; x++) {
+      for (let tile of layer.data[x]) {
+        const x = tile.pixelX + config.tileSize / 2
+        const y = tile.pixelY + config.tileSize / 2
+        switch (tile.index) {
+          case 178:
+            this.grandmas.add(new OxygenGrandma(this, x, y), true)
+            break
+          case 179:
+            this.grandmas.add(new WalkerGrandma(this, x, y), true)
+            break
+          case 180:
+            this.grandmas.add(new WheelchairGrandma(this, x, y), true)
+            break
+          case 181:
+            this.grandmas.add(new FatGrandma(this, x, y), true)
+            break
+          case 194:
+            this.player = new Player(this, x, y)
+            this.player.flipX = false
+            break
+          case 195:
+            this.player = new Player(this, x, y)
+            this.player.flipX = true
+            break
+          default:
+            if (tile.index > 0) debugger
+        }
+      }
+    }
   }
 
   setupInput () {
@@ -182,10 +204,13 @@ export default class NursingHome extends Phaser.Scene {
     }
 
     // Interact
-    if (this.J.isDown && this.player.body.blocked.down) {
+    if (this.canInteract && this.J.isDown && this.player.body.blocked.down) {
+      this.canInteract = false
       if (this.player.interactable) {
         this.player.interact(this.player.interactable)
       }
+    } else if (!this.canInteract) {
+      this.canInteract = true
     }
 
     // Place

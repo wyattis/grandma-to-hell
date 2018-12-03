@@ -23,7 +23,7 @@ export default class WheelchairGrandma extends BaseGrandma {
       frameRate: 20,
       repeat: -1
     })
-    this.speed = 300
+    this.speed = 200
     this.setSize(16, 24)
     this.setState(WheelchairStates.sitting)
   }
@@ -40,8 +40,10 @@ export default class WheelchairGrandma extends BaseGrandma {
 
   interact () {
     if (this.state === WheelchairStates.moving) {
+      this.setState(WheelchairStates.sitting)
       this.setVelocity(0, 0)
     } else {
+      this.setState(WheelchairStates.moving)
       if (this.flipX) {
         this.setVelocityX(-this.speed)
       } else {
