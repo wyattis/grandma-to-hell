@@ -5,7 +5,6 @@ import OxygenGrandma from "../characters/OxygenGrandma";
 import CacheKeys from '../types/CacheKeys'
 import WalkerGrandma from "../characters/WalkerGrandma";
 import config from '../config'
-import rooms from '../rooms'
 
 export default class NursingHome extends Phaser.Scene {
   
@@ -234,7 +233,7 @@ export default class NursingHome extends Phaser.Scene {
   }
 
   setupInput () {
-    this.cursors = this.input.keyboard.createCursorKeys()
+    // this.cursors = this.input.keyboard.createCursorKeys()
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     this.J = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J)
     this.K = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K)
@@ -246,9 +245,11 @@ export default class NursingHome extends Phaser.Scene {
 
   update (timestamp, delta) {
 
-    if (this.cursors.right.isDown || this.D.isDown) {
+    if (!this.player || !this.player.active) return
+
+    if (this.D.isDown) {
       this.player.right()
-    } else if (this.cursors.left.isDown || this.A.isDown) {
+    } else if (this.A.isDown) {
       this.player.left()
     } else {
       this.player.stop()
@@ -271,12 +272,12 @@ export default class NursingHome extends Phaser.Scene {
     }
 
     // Place
-    if (this.S.isDown || this.cursors.down.isDown) {
+    if (this.S.isDown) {
       this.player.place()
     }
     
     // Open door
-    if (this.canOpenDoor && (this.W.isDown || this.cursors.up.isDown)) {
+    if (this.canOpenDoor && this.W.isDown) {
       this.canOpenDoor = false
       if (this.player.door) {
          this.changeSceneTo('Room' + this.player.door.leadsTo)

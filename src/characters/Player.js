@@ -287,10 +287,11 @@ export default class Player extends Base {
     this.canThrowOrLift = true
   }
   
-  damage (val) {
-    this.health -= val
-    if (this.health < 0) {
-      this.scene.scene.start('GameOver')
-    }
+  death () {
+    super.death()
+    const scene = this.scene.scene
+    setTimeout(() => {
+      scene.start('GameOver')
+    }, 2000)
   }
 }

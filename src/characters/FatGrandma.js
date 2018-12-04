@@ -20,7 +20,8 @@ export default class FatGrandma extends BaseGrandma {
     })
     this.on('animationcomplete', this.animationComplete, this)
     this.play(FatAnimKeys.standing)
-    this.setSize(32, 32)
+    this.setSize(32, 30)
+    this.body.offset.y += 1
   }
 
   animationComplete (animation) {

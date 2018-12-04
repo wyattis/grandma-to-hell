@@ -1,3 +1,4 @@
+import CacheKeys from '../types/CacheKeys'
 export default class Base extends Phaser.Physics.Arcade.Sprite {
   constructor (scene, x, y, key) {
     super(scene, x, y, key)
@@ -5,12 +6,21 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     this.isBeingCarried = false
     this.health = 100
     this.attached = scene.add.container(x, y).setExclusive(true)
-    // this.healthBar = scene.add.text(0, -16, this.health, { font: '12px Arial', fill: '#000000' })
+    // this.healthBar = scene.add.image(0, -16, this.health, { font: '12px Arial', fill: '#000000' })
     // this.attached.add(this.healthBar)
     // this.healthBar.setOrigin(0.5)
     scene.add.existing(this)
     scene.physics.add.existing(this)
     this.setDragX(350)
+  }
+  
+  death () {
+    const ashes = this.scene.add.sprite(this.x, this.y, CacheKeys.ashes)
+    this.scene.physics.add.existing(ashes)
+    this.active = false
+    setTimeout(() => {
+      this.destroy()
+    })
   }
 
   preUpdate (timestamp, delta) {
@@ -34,10 +44,9 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
 
   damage (val) {
     this.health -= val
+    
     if (this.health <= 0) {
-      console.log('killing')
-      console.dir(this)
-      this.destroy()
+      this.death()
     }
   }
 }

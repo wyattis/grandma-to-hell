@@ -24,7 +24,9 @@ export default class WheelchairGrandma extends BaseGrandma {
       repeat: -1
     })
     this.speed = 50
-    this.setSize(16, 24)
+    this.setSize(16, 23)
+    this.body.offset.x -= 1
+    this.body.offset.y -= 1
     this.setState(WheelchairStates.sitting)
   }
 

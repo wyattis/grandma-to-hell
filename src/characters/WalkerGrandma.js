@@ -15,7 +15,9 @@ export default class WalkerGrandma extends BaseGrandma {
       repeat: -1
     })
     this.play(WalkerStates.walking)
-    this.setSize(16, 24)
+    this.setSize(16, 18)
+    this.body.offset.y += 5
+    this.body.offset.x += 1
   }
 
   preUpdate (...args) {

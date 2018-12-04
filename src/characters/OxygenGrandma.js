@@ -60,9 +60,7 @@ export default class OxygenGrandma extends BaseGrandma {
   }
 
   explosionComplete () {
-    console.log('oxygen animation complete')
-    this.scene.add.sprite(this.x, this.y, CacheKeys.ashes)
-    this.destroy()
+    this.death()
   }
 
   explode () {
@@ -71,9 +69,10 @@ export default class OxygenGrandma extends BaseGrandma {
 
   interact () {
     console.log('oxygen interact')
-    this.explode()
-    if (this.state !== OxygenState.smoking) {
-      this.setState(OxygenState.smoking)
-    }
+    // TODO: Actually explode
+    // this.explode()
+    // if (this.state !== OxygenState.smoking) {
+    //   this.setState(OxygenState.smoking)
+    // }
   }
 }
