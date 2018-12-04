@@ -7,6 +7,8 @@ import WalkerGrandma from "../characters/WalkerGrandma";
 import config from '../config'
 import rooms from '../rooms'
 
+let room = 0
+
 export default class NursingHome extends Phaser.Scene {
   constructor () {
     super({
@@ -23,12 +25,12 @@ export default class NursingHome extends Phaser.Scene {
   init (data) {
     this.room = data.room
     this.roomKey = `room-${this.room}`
-    this.roomFile = rooms[data.room]
+    this.roomFile = rooms[this.room]
     console.log('initializing room', this.roomFile, this.room)
   }
 
   preload () {
-    console.log('preload args', arguments)
+    console.log('NursingHome.preload')
     this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
     this.load.tilemapTiledJSON(this.roomKey, this.roomFile)
     // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
@@ -44,12 +46,22 @@ export default class NursingHome extends Phaser.Scene {
     this.load.image(CacheKeys.ashes, require('../assets/ashes.png'))
   }
 
+  nextScene (data) {
+    this.scene.stop('HUD')
+    this.scene.pause()
+    this.scene.restart()
+    // this.scene.start('NursingHome', data)
+  }
+
   create () {
-    setTimeout(() => {
-      this.scene.start('RoomTransition', {
-        room: this.room + 1
-      })
-    }, 3000)
+    console.log('NursingHome.create')
+    // this.time.addEvent({ delay: 1000, callback () {
+    //     room++
+    //     this.nextScene({
+    //       room: room
+    //     })
+    // }, callbackScope: this });
+
     // Launch the HUD
     this.scene.launch('HUD')
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
@@ -71,7 +83,7 @@ export default class NursingHome extends Phaser.Scene {
     this.addCharacters(map, xPadding, yPadding)
     
     const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
-    this.nowAddFire(firesLayer)
+    // this.nowAddFire(firesLayer)
 
     // Colliders
     wallsLayer.setCollisionBetween(0, 200)
@@ -133,6 +145,14 @@ export default class NursingHome extends Phaser.Scene {
       body.gameObject.toggleFlipX()
     })
 
+    this.events.on('shutdown', this.shutdown, this)
+
+  }
+
+  shutdown () {
+    //  We need to clear keyboard events, or they'll stack up when the Menu is re-run
+    console.log('NursingHome.shutdown')
+    this.input.keyboard.shutdown()
   }
 
   initDoors (doorLayer, xPadding, yPadding) {
@@ -234,7 +254,9 @@ export default class NursingHome extends Phaser.Scene {
             this.player.flipX = tile.index === 195
             break
           default:
-            if (tile.index > 0) debugger
+            if (tile.index > 0) {
+              console.log('invalid tile in characters', tile.index)
+            }
         }
       }
     }

@@ -15,7 +15,7 @@ const game = new Phaser.Game({
   pixelArt: true,
   plugins: {
     scene: [
-      { key: 'tilemapAnimation', plugin: TilemapAnimationPlugin, mapping: 'tilemap' }
+      // { key: 'tilemapAnimation', plugin: TilemapAnimationPlugin, mapping: 'tilemap' }
     ]
   },
   scene: [Splash, HUD, NursingHome, RoomTransition],

@@ -1,16 +1,24 @@
+import NursingHome from "./NursingHome";
+
 export default class RoomTransition extends Phaser.Scene {
 
   constructor () {
     super({ key: 'RoomTransition' })
+    this.i = 0
   }
 
   preload () {
-   
+
   }
 
   create (data) {
-     setTimeout(() => {
-        this.scene.start('NursingHome', data)
-     }, 1000)
+    setTimeout(() => {
+      console.log('adding new nursing home', this.i, data)
+      // const key = `NursingHome-${this.i}`
+      // this.scene.add(key, NursingHome, true)
+      // this.scene.start(key, data)
+      this.scene.start('NursingHome', data)
+      this.i++
+    }, 3000)
   }
 }

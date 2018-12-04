@@ -130,6 +130,7 @@ export default class Player extends Base {
   }
 
   setState (state) {
+    if (!this.active) return
     this.state = state
     if (this.isCarrying) {
       switch (state) {
