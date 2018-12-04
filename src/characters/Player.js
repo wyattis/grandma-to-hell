@@ -31,6 +31,10 @@ export default class Player extends Base {
     this.createAnims(scene)
     console.log(this.displayHeight, this.displayWidth)
     this.setSize(19, 26)
+    // this.setOrigin(0)
+    // this.updateDisplayOrigin()
+    this.body.offset.y += 8
+    this.body.offset.x += 1
     this.setSizeToFrame()
     console.log('player', this)
     console.log(this.displayHeight, this.displayWidth)
@@ -40,11 +44,12 @@ export default class Player extends Base {
     this.jumpSpeed = 250
     this.bounceSpeed = 400
     this.airDrag = 100
-    this.groundDrag = 300
+    this.groundDrag = 400
     this.body.maxVelocity.x = 200
     this.body.maxVelocity.y = 400
     this.carryObj = null
     this.interactable = null
+    this.door = null
     this.isThrowing = false
     this.isCarrying = false
     this.canThrowOrLift = true
@@ -128,7 +133,7 @@ export default class Player extends Base {
     // }
     // TODO: Handle the other transitions here
   }
-
+  
   setState (state) {
     if (!this.active) return
     this.state = state
@@ -186,10 +191,12 @@ export default class Player extends Base {
     if (this.carryObj) {
       this.carryObj.setPosition(this.x, this.body.top)
     }
+    this.interactable = null
+    this.door = null
   }
 
   lift (object) {
-    if (!this.carryObj && this.state !== PlayerState.lifting) {
+    if (object && !this.carryObj && this.state !== PlayerState.lifting) {
       this.setState(PlayerState.lifting)
       this.carryObj = object
       object.setPosition(this.x, this.body.top)
@@ -217,7 +224,7 @@ export default class Player extends Base {
   }
 
   throw () {
-    if (this.carryObj && this.state !== PlayerState.throwing && this.state !== PlayerState.lifting) {
+    if (this.carryObj !== null && this.state !== PlayerState.throwing && this.state !== PlayerState.lifting) {
       this.setState(PlayerState.throwing)
       this.carryObj.setCarrying(false)
       this.carryObj.setVelocity(this.flipX ? -200 : 200, -400)
@@ -280,5 +287,12 @@ export default class Player extends Base {
 
   stopThrowOrLift () {
     this.canThrowOrLift = true
+  }
+  
+  damage (val) {
+    super.damage(val)
+    if (this.health < 0) {
+      this.scene.scene.start('GameOver')
+    }
   }
 }

@@ -2,9 +2,10 @@ import Base from './Base'
 export default class BaseGrandma extends Base {
   constructor (scene, x, y, key) {
     super(scene, x, y, key)
-    scene.physics.add.existing(this)
     this.setCollideWorldBounds(true)
     this.body.onWorldBounds = true
+    this.body.offset.x += 1
+    this.body.offset.y += 1
   }
 
   flip () {

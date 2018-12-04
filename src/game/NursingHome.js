@@ -7,62 +7,38 @@ import WalkerGrandma from "../characters/WalkerGrandma";
 import config from '../config'
 import rooms from '../rooms'
 
-let room = 0
-
 export default class NursingHome extends Phaser.Scene {
-  constructor () {
-    super({
-      key: 'NursingHome',
-      physics: {
-        arcade: {
-          debug: true,
-          gravity: {y: 600}
-        }
+  
+  constructor (data) {
+    data.physics = {
+      arcade: {
+        debug: config.debug,
+        gravity: {y: 600}
       }
-    })
+    }
+    super(data)
   }
-
+  
   init (data) {
-    this.room = data.room
-    this.roomKey = `room-${this.room}`
-    this.roomFile = rooms[this.room]
-    console.log('initializing room', this.roomFile, this.room)
+    console.log('initializing room')
   }
 
   preload () {
     console.log('NursingHome.preload')
-    this.load.image(CacheKeys.env, require('../assets/grandmabgtiles.png'))
-    this.load.tilemapTiledJSON(this.roomKey, this.roomFile)
-    // this.load.spritesheet(CacheKeys.grandmas, require('../assets/grandmas.png'), {frameWidth: 32, frameHeight: 48})
-    this.load.spritesheet(CacheKeys.walker, require('../assets/walker.png'), {frameWidth: 27, frameHeight: 29})
-    this.load.image(CacheKeys.wheelie, require('../assets/wheelie.png'))
-    this.load.spritesheet(CacheKeys.wheelieMovin, require('../assets/wheeliemovin.png'), {frameWidth: 29, frameHeight: 27})
-    this.load.spritesheet(CacheKeys.boomMa, require('../assets/boom-ma.png'), {frameWidth: 34, frameHeight: 31})
-    this.load.spritesheet(CacheKeys.bigMaBounce, require('../assets/bigmabounce.png'), {frameWidth: 47, frameHeight: 37})
-    this.load.spritesheet(CacheKeys.bigMaBall, require('../assets/bigmaball.png'), {frameWidth: 47, frameHeight: 37})
-    this.load.spritesheet(CacheKeys.kid, require('../assets/kid.png'), {frameWidth: 38, frameHeight: 37})
-    this.load.spritesheet(CacheKeys.fires, require('../assets/fires.png'), {frameWidth: 16, frameHeight: 16})
-    this.load.spritesheet(CacheKeys.explosion, require('../assets/explosion.png'), {frameWidth: 42, frameHeight: 43})
-    this.load.image(CacheKeys.ashes, require('../assets/ashes.png'))
   }
 
-  nextScene (data) {
-    this.scene.stop('HUD')
-    this.scene.pause()
-    this.scene.restart()
-    // this.scene.start('NursingHome', data)
+  shutdown () {
+    //  We need to clear keyboard events, or they'll stack up when the Menu is re-run
+    console.log('NursingHome.shutdown')
+    this.input.keyboard.shutdown()
   }
-
+  
+  changeSceneTo (key) {
+    this.scene.start(key)
+  }
+  
   create () {
-    console.log('NursingHome.create')
-    // this.time.addEvent({ delay: 1000, callback () {
-    //     room++
-    //     this.nextScene({
-    //       room: room
-    //     })
-    // }, callbackScope: this });
-
-    // Launch the HUD
+    
     this.scene.launch('HUD')
      // For tilemap checkout https://labs.phaser.io/edit.html?src=src\game%20objects\tilemap\collision\tile%20callbacks.js
     const yPadding = config.tileSize * 2
@@ -73,17 +49,20 @@ export default class NursingHome extends Phaser.Scene {
     const environment = map.addTilesetImage('background', CacheKeys.env)
     const fires = map.addTilesetImage('fires', CacheKeys.fires)
     map.createStaticLayer('Background1', environment, xPadding, yPadding)
+    const backgroundFires = map.createDynamicLayer('FireBackground', fires, xPadding, yPadding)
     map.createStaticLayer('Background2', environment, xPadding, yPadding)
     map.createStaticLayer('Foreground', environment, xPadding, yPadding)
     const wallsLayer = map.createStaticLayer('Walls', environment, xPadding, yPadding)
     const doorsLayer = map.createStaticLayer('Doors', environment, xPadding, yPadding)
 
     const breakableWalls = map.createStaticLayer('Breakable-walls', environment, xPadding, yPadding)
+    const firesLayer = map.createDynamicLayer('FireForeground', fires, xPadding, yPadding)
     this.initDoors(doorsLayer, xPadding, yPadding)
     this.addCharacters(map, xPadding, yPadding)
     
-    const firesLayer = map.createDynamicLayer('Fire', fires, xPadding, yPadding)
-    // this.nowAddFire(firesLayer)
+ 
+    this.nowAddFire(backgroundFires)
+    this.nowAddFire(firesLayer)
 
     // Colliders
     wallsLayer.setCollisionBetween(0, 200)
@@ -131,7 +110,7 @@ export default class NursingHome extends Phaser.Scene {
     })
     // Doors
     this.physics.add.overlap(this.player, this.doors, function (player, door) {
-      player.interactable = door
+      player.door = door
     })
 
     this.setupInput()
@@ -146,13 +125,6 @@ export default class NursingHome extends Phaser.Scene {
     })
 
     this.events.on('shutdown', this.shutdown, this)
-
-  }
-
-  shutdown () {
-    //  We need to clear keyboard events, or they'll stack up when the Menu is re-run
-    console.log('NursingHome.shutdown')
-    this.input.keyboard.shutdown()
   }
 
   initDoors (doorLayer, xPadding, yPadding) {
@@ -162,6 +134,7 @@ export default class NursingHome extends Phaser.Scene {
     for (let key in doorLayer.layer.properties) {
       doorKeys.push(doorLayer.layer.properties[key])
     }
+    const doorIndexes = [145, 182, 183, 184, 185, 186, 187]
     console.log('doorKeys', doorKeys)
     for (let row of doorLayer.layer.data) {
       for (let tile of row) {
@@ -169,7 +142,7 @@ export default class NursingHome extends Phaser.Scene {
         const y = yPadding + tile.pixelY + config.tileSize / 2
         // TODO: Filter for only tops of doors
         if (tile.index > -1) console.log('door index', tile.index)
-        if (tile.index === 145 || tile.index === 182) {
+        if (doorIndexes.indexOf(tile.index) > -1) {
           const door = this.add.zone(tile.pixelX, tile.pixelY + config.tileSize * 2).setSize(16, 32)
           this.physics.world.enable(door)
           door.body.setAllowGravity(false)
@@ -178,12 +151,6 @@ export default class NursingHome extends Phaser.Scene {
           if (n < doorKeys.length) {
             door.leadsTo = doorKeys[n]
             console.log('assiging key', door.leadsTo)
-            door.interact = ((door) => (() => {
-              console.log('changing scene to', door.leadsTo)
-              this.scene.restart({
-                room: door.leadsTo
-              })
-            }))(door)
           } else {
             console.error('Not enough door keys added', n)
           }
@@ -235,6 +202,9 @@ export default class NursingHome extends Phaser.Scene {
       for (let tile of layer.data[x]) {
         const x = xPadding + tile.pixelX + config.tileSize / 2
         const y = yPadding + tile.pixelY + config.tileSize / 2
+        if (tile.index > 0) {
+          console.log('adding character for', tile.index)
+        }
         switch (tile.index) {
           case 178:
             this.grandmas.add(new OxygenGrandma(this, x, y), true)
@@ -302,6 +272,16 @@ export default class NursingHome extends Phaser.Scene {
     // Place
     if (this.S.isDown || this.cursors.down.isDown) {
       this.player.place()
+    }
+    
+    // Open door
+    if (this.canOpenDoor && (this.W.isDown || this.cursors.up.isDown)) {
+      this.canOpenDoor = false
+      if (this.player.door) {
+         this.changeSceneTo('Room' + this.player.door.leadsTo)
+      }
+    } else {
+      this.canOpenDoor = true
     }
 
     // Throw/lift

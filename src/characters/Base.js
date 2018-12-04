@@ -1,6 +1,7 @@
 export default class Base extends Phaser.Physics.Arcade.Sprite {
   constructor (scene, x, y, key) {
     super(scene, x, y, key)
+    this.scene = scene
     this.isBeingCarried = false
     this.health = 100
     this.attached = scene.add.container(x, y).setExclusive(true)
@@ -10,7 +11,7 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this)
     // this.setOrigin(.5, 1)
     scene.physics.add.existing(this)
-    this.setDragX(300)
+    this.setDragX(350)
   }
 
   preUpdate (timestamp, delta) {
@@ -35,5 +36,8 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
 
   damage (val) {
     this.health -= val
+    if (this.health <= 0) {
+      this.destroy()
+    }
   }
 }

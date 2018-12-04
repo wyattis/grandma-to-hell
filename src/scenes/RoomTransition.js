@@ -1,4 +1,3 @@
-import NursingHome from "./NursingHome";
 
 export default class RoomTransition extends Phaser.Scene {
 
@@ -12,13 +11,12 @@ export default class RoomTransition extends Phaser.Scene {
   }
 
   create (data) {
-    setTimeout(() => {
-      console.log('adding new nursing home', this.i, data)
-      // const key = `NursingHome-${this.i}`
-      // this.scene.add(key, NursingHome, true)
-      // this.scene.start(key, data)
-      this.scene.start('NursingHome', data)
-      this.i++
-    }, 3000)
+    // setTimeout(() => {
+    //   console.log('adding new nursing home', this.i, data)
+    //   // const key = `NursingHome-${this.i}`
+    //   // this.scene.add(key, NursingHome, true)
+    //   // this.scene.start(key, data)
+    //   this.i++
+    // }, 3000)
   }
 }

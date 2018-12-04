@@ -1,3 +1,4 @@
+import config from '../config'
 export default class Splash extends Phaser.Scene {
 
   constructor () {
@@ -12,15 +13,16 @@ export default class Splash extends Phaser.Scene {
   }
 
   create () {
-    const theme = this.sound.add('theme')
-    // theme.play()
-    theme.loop = true
-    theme.volume = .5
+    if (!config.debug) {
+      const theme = this.sound.add('theme')
+      theme.play()
+      theme.loop = true
+      theme.volume = .5
+    }
+
 
     setTimeout(() => {
-      this.scene.start('RoomTransition', {
-        room: 1
-      })
+      this.scene.start('Title')
     })
   }
 }

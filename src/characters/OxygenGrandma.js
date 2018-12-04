@@ -31,7 +31,7 @@ export default class OxygenGrandma extends BaseGrandma {
     })
     scene.anims.create({
       key: OxygenAnimKeys.exploding,
-      frames: scene.anims.generateFrameNumbers(CacheKeys.explosion, {start: 0, end: 8}),
+      frames: scene.anims.generateFrameNumbers(CacheKeys.explosion, {start: 0, end: 12}),
       frameRate: 7
     })
     this.explosion.on('animationcomplete', this.explosionComplete, this);
