@@ -5,9 +5,9 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     this.isBeingCarried = false
     this.health = 100
     this.attached = scene.add.container(x, y).setExclusive(true)
-    this.healthBar = scene.add.text(0, -16, this.health, { font: '12px Arial', fill: '#000000' })
-    this.attached.add(this.healthBar)
-    this.healthBar.setOrigin(0.5)
+    // this.healthBar = scene.add.text(0, -16, this.health, { font: '12px Arial', fill: '#000000' })
+    // this.attached.add(this.healthBar)
+    // this.healthBar.setOrigin(0.5)
     scene.add.existing(this)
     scene.physics.add.existing(this)
     this.setDragX(350)
@@ -16,7 +16,7 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
   preUpdate (timestamp, delta) {
     super.preUpdate(timestamp, delta)
     this.attached.setPosition(this.x, this.y)
-    this.healthBar.setText(this.health.toFixed(1))
+    // this.healthBar.setText(this.health.toFixed(1))
   }
 
   setCarrying (val) {

@@ -28,6 +28,7 @@ export const PlayerState = {
 export default class Player extends Base {
   constructor (scene, x, y) {
     super(scene, x, y)
+    this.health = 20
     this.createAnims(scene)
     console.log(this.displayHeight, this.displayWidth)
     this.setSize(19, 26)

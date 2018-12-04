@@ -3,5 +3,5 @@ export default {
   zoom: 3,
   width: 22,
   height: 14,
-  debug: true
+  debug: false
 }

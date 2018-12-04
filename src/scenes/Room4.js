@@ -16,11 +16,16 @@ export default class Room3 extends NursingHome {
   
   create () {
     super.create()
-    const painting = this.add.zone(16 * config.tileSize, 11 * config.tileSize).setSize(48, 32).setOrigin(0)
-    window.painting = painting
-    this.physics.world.enable(painting)
-    this.physics.overlap(this.grandmas, painting, function (s1, s2) {
+    this.player.interact = () => {
       this.scene.start('Win')
-    })
+    }
+  }
+  
+  preUpdate (...args) {
+    super.preUpdate(...args)
+    console.log('preupdate', this.player.body.x)
+    if (this.player.body.x < config.tileSize * 11) {
+      this.scene.start('Win')
+    }
   }
 }
