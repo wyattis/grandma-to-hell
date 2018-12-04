@@ -1,5 +1,6 @@
 import config from '../config'
 
+let hasSeenIntro = false
 export default class Title extends Phaser.Scene {
 
   constructor () {
@@ -12,11 +13,11 @@ export default class Title extends Phaser.Scene {
   }
   
   create () {
-      this.titleText = this.add.text(config.tileSize * config.width * config.zoom / 2, 240, 'GRANDMA TO HELL', { fontFamily: 'Arial', fontSize: 64, color: 'red' });
-      this.titleText.setOrigin(0.5);
+      this.titleText = this.add.text(config.tileSize * config.width * config.zoom / 2, 240, 'GRANDMA TO HELL', { fontFamily: 'Arial', fontSize: 64, color: 'red' })
+      this.titleText.setOrigin(0.5)
       
-      this.titleText = this.add.text(config.tileSize * config.width * config.zoom / 2, 400, '- PRESS ANY KEY TO PLAY -', { fontFamily: 'Arial', fontSize: 32, color: 'white' });
-      this.titleText.setOrigin(0.5);
+      this.titleText = this.add.text(config.tileSize * config.width * config.zoom / 2, 400, '- PRESS ANY KEY TO PLAY -', { fontFamily: 'Arial', fontSize: 32, color: 'white' })
+      this.titleText.setOrigin(0.5)
       
       /*
       this.cursors = this.input.keyboard.createCursorKeys()
@@ -31,17 +32,17 @@ export default class Title extends Phaser.Scene {
       
       this.input.keyboard.on('keydown', (event) => {
 
-        console.log("START THE GAME");
+        console.log('START THE GAME')
         
         // CHANGE ROOM
-        this.scene.pause();
-        this.scene.start("Introduction");
+        this.scene.pause()
+        this.scene.start(hasSeenIntro ? 'Room0' : 'Introduction')
+        hasSeenIntro = true
         
     });
   }
   
-  update()
-  {
+  update () {
   
   }
 

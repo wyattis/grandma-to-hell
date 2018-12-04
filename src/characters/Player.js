@@ -43,8 +43,6 @@ export default class Player extends Base {
     this.bounceSpeed = 400
     this.airDrag = 100
     this.groundDrag = 400
-    this.body.maxVelocity.x = 200
-    this.body.maxVelocity.y = 400
     this.carryObj = null
     this.interactable = null
     this.door = null
@@ -194,18 +192,18 @@ export default class Player extends Base {
   }
 
   lift (object) {
-    if (object && !this.carryObj && this.state !== PlayerState.lifting) {
+    if (object && !this.carryObj && this.state !== PlayerState.lifting && object instanceof Base) {
       this.setState(PlayerState.lifting)
       this.carryObj = object
       object.setPosition(this.x, this.body.top)
-      object.setCarrying(true)
+      object.setCarrying(true, this)
     }
   }
 
   place () {
     if (this.carryObj && !this.isThrowing) {
       this.setState(PlayerState.placing)
-      this.carryObj.setCarrying(false)
+      this.carryObj.setCarrying(false, this)
       this.carryObj = null
     }
   }
@@ -224,7 +222,7 @@ export default class Player extends Base {
   throw () {
     if (this.carryObj !== null && this.state !== PlayerState.throwing && this.state !== PlayerState.lifting) {
       this.setState(PlayerState.throwing)
-      this.carryObj.setCarrying(false)
+      this.carryObj.setCarrying(false, this)
       this.carryObj.setVelocity(this.flipX ? -200 : 200, -400)
       this.carryObj = null
     }
@@ -289,9 +287,9 @@ export default class Player extends Base {
   
   death () {
     super.death()
-    const scene = this.scene.scene
+    const scene = this.scene
     setTimeout(() => {
-      scene.start('GameOver')
+      scene.scene.start('GameOver')
     }, 2000)
   }
 }

@@ -44,7 +44,7 @@ For development run `npm start` to start the dev server.For production `npm run 
 - Allow any interaction with the last grandma to trigger the win screen
 - Time the music with the intro text
 - Floating health bars
-- All interaction when standing on top of a grandma
+- Allow interaction when standing on top of a grandma
 
 ### Stretch
 

@@ -287,7 +287,7 @@ export default class NursingHome extends Phaser.Scene {
     }
 
     // Throw/lift
-    if (this.K.isDown) {
+    if (this.K.isDown && this.player.interactable !== null) {
       this.player.throwOrLift(this.player.interactable)
     } else {
       this.player.stopThrowOrLift()

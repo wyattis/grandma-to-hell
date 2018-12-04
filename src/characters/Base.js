@@ -12,6 +12,8 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this)
     scene.physics.add.existing(this)
     this.setDragX(350)
+    this.body.maxVelocity.x = 200
+    this.body.maxVelocity.y = 400
   }
   
   death () {
@@ -29,14 +31,15 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     // this.healthBar.setText(this.health.toFixed(1))
   }
 
-  setCarrying (val) {
+  setCarrying (val, player) {
     this.isBeingCarried = val
     if (this.isBeingCarried) {
       this.setRotation(Math.PI / 2)
       this.disableBody()
     } else {
       this.body.x = this.x
-      this.body.y = this.y
+      this.body.y = (player && (player.body.touching.down || player.body.blocked.down)) ? player.body.top : player.body.bottom + this.height / 2
+      // this.setVelocity(player.body.velocity.x, player.body.velocity.y)
       this.enableBody()
       this.setRotation(0)
     }
