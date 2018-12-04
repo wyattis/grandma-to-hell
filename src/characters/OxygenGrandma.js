@@ -37,6 +37,8 @@ export default class OxygenGrandma extends BaseGrandma {
     this.explosion.on('animationcomplete', this.explosionComplete, this);
     this.setState(OxygenState.sitting)
     this.setSize(16, 20)
+    this.body.offset.y += 4
+    this.body.offset.x += 1
   }
 
   damage (val) {

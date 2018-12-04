@@ -9,7 +9,6 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     this.attached.add(this.healthBar)
     this.healthBar.setOrigin(0.5)
     scene.add.existing(this)
-    // this.setOrigin(.5, 1)
     scene.physics.add.existing(this)
     this.setDragX(350)
   }
@@ -23,7 +22,6 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
   setCarrying (val) {
     this.isBeingCarried = val
     if (this.isBeingCarried) {
-      // this.setImmovable(true)
       this.setRotation(Math.PI / 2)
       this.disableBody()
     } else {
@@ -37,6 +35,8 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
   damage (val) {
     this.health -= val
     if (this.health <= 0) {
+      console.log('killing')
+      console.dir(this)
       this.destroy()
     }
   }

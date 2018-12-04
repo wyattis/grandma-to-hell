@@ -31,11 +31,8 @@ export default class Player extends Base {
     this.createAnims(scene)
     console.log(this.displayHeight, this.displayWidth)
     this.setSize(19, 26)
-    // this.setOrigin(0)
-    // this.updateDisplayOrigin()
     this.body.offset.y += 8
     this.body.offset.x += 1
-    this.setSizeToFrame()
     console.log('player', this)
     console.log(this.displayHeight, this.displayWidth)
     this.setCollideWorldBounds(true)
@@ -290,7 +287,7 @@ export default class Player extends Base {
   }
   
   damage (val) {
-    super.damage(val)
+    this.health -= val
     if (this.health < 0) {
       this.scene.scene.start('GameOver')
     }

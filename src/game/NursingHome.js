@@ -20,7 +20,7 @@ export default class NursingHome extends Phaser.Scene {
   }
   
   init (data) {
-    console.log('initializing room')
+    console.log('initializing room', this.roomFile, this.roomKey)
   }
 
   preload () {
@@ -59,6 +59,7 @@ export default class NursingHome extends Phaser.Scene {
     const firesLayer = map.createDynamicLayer('FireForeground', fires, xPadding, yPadding)
     this.initDoors(doorsLayer, xPadding, yPadding)
     this.addCharacters(map, xPadding, yPadding)
+    console.log('doors', this.doors.getChildren())
     
  
     this.nowAddFire(backgroundFires)
