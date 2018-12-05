@@ -41,11 +41,32 @@ For development run `npm start` to start the dev server.For production `npm run 
 ### TODO
 
 - Correctly handle all player states
-- Allow any interaction with the last grandma to trigger the win screen
+- ~~Allow any interaction with the last grandma to trigger the win screen~~
 - Time the music with the intro text
 - Floating health bars
 - Allow interaction when standing on top of a grandma
 
-### Stretch
+### Future
 
-- Explodable walls
+- Destroyable walls
+- Exploding grandmas
+- Intro scene
+- Win scene
+- Pause menu on ESC with controls
+- Options menu
+    - Volume level
+    - Music/Effects on/off
+- More levels
+- Room transitions
+- Maybe add the concept of lives?
+- Keep states between each room (health, grandmas)
+- Sound effects
+    - Fire
+    - Jump
+    - Bounce
+    - Die
+    - Explosion
+    - Wall crumbling
+    - Grandma noises ("I made pie!", "So cute, I could just squeeze him to death", etc)
+- Main theme?
+- Different entrances and exits

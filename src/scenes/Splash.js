@@ -17,7 +17,7 @@ export default class Splash extends Phaser.Scene {
       const theme = this.sound.add('theme')
       theme.play()
       theme.loop = true
-      theme.volume = .5
+      theme.volume = .4
     }
 
 
