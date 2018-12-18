@@ -1,20 +1,25 @@
 
-import CacheKeys from "../types/CacheKeys";
-import BaseGrandma from "./BaseGrandma";
+import CacheKeys from '../types/CacheKeys'
+import BaseGrandma from './BaseGrandma'
 export const OxygenAnimKeys = {
   sitting: 'oxygen-sitting',
   smoking: 'oxygen-smoking',
   exploding: 'oxygen-exploding'
 }
-export const OxygenState = {
-  sitting: 0,
-  smoking: 1
+export enum OxygenState {
+  sitting,
+  smoking
 }
 export default class OxygenGrandma extends BaseGrandma {
-  constructor (scene, x, y) {
+
+  private explosion: Phaser.GameObjects.Sprite
+  private state!: OxygenState
+
+  constructor (scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, CacheKeys.boomMa)
     this.scene = scene
     this.health = 10
+    // @ts-ignore
     this.explosion = scene.add.sprite(0, 0).setActive(false).setVisible(false)
     this.attached.add(this.explosion)
     scene.anims.create({
@@ -41,7 +46,7 @@ export default class OxygenGrandma extends BaseGrandma {
     this.body.offset.x += 1
   }
 
-  damage (val) {
+  damage (val: number) {
     if (this.state === OxygenState.smoking) {
       this.explode()
     } else {
@@ -49,7 +54,7 @@ export default class OxygenGrandma extends BaseGrandma {
     }
   }
 
-  setState (state) {
+  setState (state: OxygenState) {
     this.state = state
     switch (state) {
       case OxygenState.smoking:

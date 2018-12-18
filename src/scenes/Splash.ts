@@ -1,4 +1,3 @@
-import config from '../config'
 export default class Splash extends Phaser.Scene {
 
   constructor () {
@@ -6,15 +5,16 @@ export default class Splash extends Phaser.Scene {
   }
 
   preload () {
-    // this.load.image('logo', require('../assets/logo.png'))
-    this.load.audio('theme', [
-      require('../assets/audio/theme.mp3')
-    ])
+    if (!DEBUG) {
+      this.load.audio('theme', [
+        require('../assets/audio/theme.mp3')
+      ])
+    }
   }
 
   create () {
-    if (!config.debug) {
-      const theme = this.sound.add('theme')
+    if (!DEBUG) {
+      const theme = this.sound.add('theme') as Phaser.Sound.HTML5AudioSound
       theme.play()
       theme.loop = true
       theme.volume = .4

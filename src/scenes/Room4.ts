@@ -1,6 +1,6 @@
 import NursingHome from '../game/NursingHome'
-import config from '../config'
-export default class Room3 extends NursingHome {
+import {Buttons} from "../config/InputMappings";
+export default class Room4 extends NursingHome {
   constructor () {
     super({
       key: 'Room4'
@@ -24,10 +24,11 @@ export default class Room3 extends NursingHome {
     }
   }
   
-  preUpdate (...args) {
-    super.preUpdate(...args)
+  preUpdate (timestamp: integer, delta: integer) {
+    // @ts-ignore
+    super.preUpdate(timestamp, delta)
     console.log('preupdate', this.player.body.x)
-    if (this.W.isDown) {
+    if (this.io.buttons[Buttons.up].isDown) {
       return this.scene.start('Win')
     }
     

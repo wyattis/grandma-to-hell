@@ -1,20 +1,23 @@
-import CacheKeys from "../types/CacheKeys";
-import BaseGrandma from "./BaseGrandma";
+import CacheKeys from '../types/CacheKeys'
+import BaseGrandma from './BaseGrandma'
 export const WheelieAnimKeys = {
   moving: 'wheelie-moving',
   sitting: 'wheelie-sitting'
 }
-export const WheelchairStates = {
-  sitting: 0,
-  moving: 1
+export enum WheelchairStates {
+  sitting,
+  moving
 }
 export default class WheelchairGrandma extends BaseGrandma {
 
-  constructor (scene, x, y) {
-    super(scene, x, y)
+  private speed: number
+  private state!: WheelchairStates
+
+  constructor (scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, CacheKeys.wheelieMovin)
     scene.anims.create({
       key: WheelieAnimKeys.sitting,
-      frames: [{ key: CacheKeys.wheelie }],
+      frames: [{ key: CacheKeys.wheelie, frame: 0 }],
       frameRate: 1
     })
     scene.anims.create({
@@ -30,7 +33,7 @@ export default class WheelchairGrandma extends BaseGrandma {
     this.setState(WheelchairStates.sitting)
   }
 
-  setState (state) {
+  setState (state: WheelchairStates) {
     this.state = state
     switch (state) {
       case WheelchairStates.moving:

@@ -2,14 +2,19 @@
 const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const config = require('./config')
+
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
 
 module.exports = {
   entry: {
-    main: './src/index.js'
+    main: './src/index.ts'
   },
   mode: 'development',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: resolve(__dirname, 'dist'),
     filename: 'grandma-to-hell.[name].[chunkhash].js'
   },
   optimization: {
@@ -26,12 +31,24 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.json']
+    extensions: ['.js', '.json', '.ts'],
+    alias: {
+      '@': resolve('src')
+    }
   },
   module: {
     rules: [{
       test: [ /\.vert$/, /\.frag$/ ],
       use: 'raw-loader'
+    }, {
+      test: /\.tsx?$/,
+      use: [{
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+        }
+      }],
+      exclude: /node_modules/
     }, {
       test: /\.json$/,
       type: 'javascript/auto',
@@ -42,12 +59,18 @@ module.exports = {
     }]
   },
   plugins: [
-    new webpack.DefinePlugin({
+    new webpack.DefinePlugin(Object.assign({
       'CANVAS_RENDERER': JSON.stringify(true),
       'WEBGL_RENDERER': JSON.stringify(true)
-    }),
+    }, Object.keys(config).reduce((agg, key) => {
+      agg[key] = JSON.stringify(config[key])
+      return agg
+    }, {}))),
     new HtmlWebpackPlugin({
       title: 'Grandma to hell'
     })
-  ]
+  ],
+  watchOptions: {
+    poll: true
+  }
 };

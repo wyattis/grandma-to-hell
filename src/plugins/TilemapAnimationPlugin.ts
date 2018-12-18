@@ -1,10 +1,13 @@
 // Heavy influence from https://github.com/nkholski/phaser-animated-tiles/blob/master/src/plugin/main.js
-export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
+import {AnimationLayer, TilemapAnimationFrame, AnimationTile, AnimationTileFilter} from './TilemapAnimation'
+export default class TilemapAnimationPlugin extends Phaser.Plugins.ScenePlugin {
 
-  constructor(scene, pluginManager) {
+  private animationLayers: AnimationLayer[] = []
+  private isActive: boolean = false
+
+  constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
+    // @ts-ignore
     super(scene, pluginManager)
-    this.animationLayers = []
-    this.isActive = false
     if (!scene.sys.settings.isBooted) {
       scene.sys.events.once('boot', this.boot, this)
     }
@@ -14,14 +17,15 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
    console.log('TilemapAnimationPlugin.init')
   }
 
-  boot (systems) {
+  // @ts-ignore
+  boot (systems: Phaser.Scenes.Systems) {
     console.log('TilemapAnimationPlugin.boot')
     systems.events.on('postupdate', this.postUpdate, this)
     systems.events.on('shutdown', this.shutdown, this)
     systems.events.on('destroy', this.destroy, this)
   }
 
-  postUpdate (timestamp, delta) {
+  postUpdate (timestamp: number, delta: number) {
     if (!this.isActive) return
     let i = this.animationLayers.length
     while (i--) {
@@ -36,7 +40,7 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
     }
   }
 
-  updateLayer (tiles, frames) {
+  updateLayer (tiles: AnimationTile[], frames: TilemapAnimationFrame[]) {
     let i = tiles.length
     while (i--) {
       tiles[i].frameIndex++
@@ -58,19 +62,28 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
     this.animationLayers.length = 0
   }
 
-  addLayerAnimation (layer, frames, fps, filterCb) {
-    const animationLayer = {
-      layer: layer,
-      rate: 1000 / fps,
-      frames,
-      tiles: [],
-      lastUpdateTimestamp: 0
-    }
+  addLayerAnimation (layer: Phaser.Tilemaps.DynamicTilemapLayer, frames: AnimationFrameConfig[], fps: number, filterCb: AnimationTileFilter) {
+
+    const animFrames: TilemapAnimationFrame[] = []
 
     // Build optimized animation frames
     for (let frame of frames) {
-      const tileset = layer.tileset.find(tileset => tileset.name === frame.key)
-      frame.gid = frame.frame + tileset.firstgid
+      let tileset: Phaser.Tilemaps.Tileset
+      // @ts-ignore
+      tileset = layer.tileset.find(ts => ts.name === frame.key)
+      animFrames.push({
+        gid: frame.frame as number + tileset.firstgid,
+        frame: frame.frame as number
+      })
+    }
+
+    const animationLayer: AnimationLayer = {
+      layer: layer,
+      rate: 1000 / fps,
+      frames: animFrames,
+      tiles: [],
+      lastUpdateTimestamp: 0,
+      gid: 0
     }
 
     // Filter the tiles based on a function
@@ -79,12 +92,14 @@ export default class TilemapAnimationPlugin extends Phaser.Plugins.BasePlugin {
     for (let row of layer.layer.data) {
       for (let tile of row) {
         if (tile.index > -1 ){
-          const frame = frames.find(frame => frame.gid === tile.index)
-          const frameIndex = frames.indexOf(frame)
-          if (frameIndex > -1) {
-            tile.frameIndex = frameIndex
-            if ((!filterCb || (filterCb && filterCb(frame, tile)))) {
-              animationLayer.tiles.push(tile)
+          const frame = animFrames.find(frame => frame.gid === tile.index)
+          if (frame) {
+            const frameIndex = animFrames.indexOf(frame)
+            if (frameIndex > -1) {
+              tile.frameIndex = frameIndex
+              if ((!filterCb || (filterCb && filterCb(frame, tile)))) {
+                animationLayer.tiles.push(tile)
+              }
             }
           }
         }

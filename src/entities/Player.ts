@@ -1,33 +1,49 @@
 import Base from './Base'
-import CacheKeys from "../types/CacheKeys";
+import CacheKeys from '../types/CacheKeys'
+import BaseGrandma from './BaseGrandma'
 
-export const AnimKeys = {
-  standing: 'standing',
-  standingCarry: 'standingCarry',
-  running: 'running',
-  runningCarry: 'runningCarry',
-  lifting: 'lifting',
-  placing: 'placing',
-  throwing: 'throwing',
-  jumpingUp: 'jumpingUp',
-  jumpingDown: 'jumpingDown',
-  jumpingUpCarry: 'jumpingUpCarry',
-  jumpingDownCarry: 'jumpingDownCarry'
+export enum AnimKeys {
+  standing = 'standing',
+  standingCarry = 'standingCarry',
+  running = 'running',
+  runningCarry = 'runningCarry',
+  lifting = 'lifting',
+  placing = 'placing',
+  throwing = 'throwing',
+  jumpingUp = 'jumpingUp',
+  jumpingDown = 'jumpingDown',
+  jumpingUpCarry = 'jumpingUpCarry',
+  jumpingDownCarry = 'jumpingDownCarry'
 }
 
-export const PlayerState = {
-  standing: 0,
-  running: 2,
-  lifting: 4,
-  placing: 5,
-  throwing: 6,
-  jumpingUp: 7,
-  jumping: 8
+export enum PlayerState {
+  standing,
+  running,
+  lifting,
+  placing,
+  throwing,
+  jumpingUp,
+  jumping
 }
 
 export default class Player extends Base {
-  constructor (scene, x, y) {
-    super(scene, x, y)
+  private groundAcc = 1000
+  private jumpSpeed = 250
+  private bounceSpeed = 400
+  private airDrag = 100
+  private groundDrag = 400
+  public carryObj: Base|null = null
+  public interactable: Phaser.GameObjects.GameObject|null = null
+  public carrying: BaseGrandma|null = null
+  public door: Phaser.GameObjects.GameObject|null = null
+  private isThrowing = false
+  private isCarrying = false
+  private canThrowOrLift = true
+  private isHoldingJump: boolean = false
+  private state: PlayerState = PlayerState.standing
+
+  constructor (scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, CacheKeys.kid)
     this.health = 20
     this.createAnims(scene)
     console.log(this.displayHeight, this.displayWidth)
@@ -37,23 +53,11 @@ export default class Player extends Base {
     console.log('player', this)
     console.log(this.displayHeight, this.displayWidth)
     this.setCollideWorldBounds(true)
-    // Config
-    this.groundAcc = 1000
-    this.jumpSpeed = 250
-    this.bounceSpeed = 400
-    this.airDrag = 100
-    this.groundDrag = 400
-    this.carryObj = null
-    this.interactable = null
-    this.door = null
-    this.isThrowing = false
-    this.isCarrying = false
-    this.canThrowOrLift = true
     this.setState(PlayerState.standing)
     this.on('animationcomplete', this.animComplete, this)
   }
 
-  createAnims (scene) {
+  createAnims (scene: Phaser.Scene) {
     const frameRate = 10
     scene.anims.create({
       key: AnimKeys.standing,
@@ -130,7 +134,7 @@ export default class Player extends Base {
     // TODO: Handle the other transitions here
   }
   
-  setState (state) {
+  setState (state: PlayerState) {
     if (!this.active) return
     this.state = state
     if (this.isCarrying) {
@@ -173,8 +177,8 @@ export default class Player extends Base {
     }
   }
 
-  preUpdate (...args) {
-    super.preUpdate(...args)
+  preUpdate (timestamp: number, delta: number) {
+    super.preUpdate(timestamp, delta)
     if (this.body.blocked.right || this.body.blocked.left) {
       this.setAccelerationX(0)
     }
@@ -191,7 +195,7 @@ export default class Player extends Base {
     this.door = null
   }
 
-  lift (object) {
+  lift (object?: Phaser.GameObjects.GameObject) {
     if (object && !this.carryObj && this.state !== PlayerState.lifting && object instanceof Base) {
       this.setState(PlayerState.lifting)
       this.carryObj = object
@@ -213,8 +217,10 @@ export default class Player extends Base {
     this.setState(PlayerState.jumpingUp)
   }
 
-  interact (object) {
+  interact (object?: BaseGrandma|Phaser.GameObjects.GameObject) {
+    // @ts-ignore
     if (object && object.interact) {
+      // @ts-ignore
       object.interact()
     }
   }
@@ -228,7 +234,7 @@ export default class Player extends Base {
     }
   }
 
-  throwOrLift (obj) {
+  throwOrLift (obj?: Phaser.GameObjects.GameObject) {
     if (!this.canThrowOrLift) return
     this.canThrowOrLift = false
     if (this.isCarrying) {
@@ -265,7 +271,7 @@ export default class Player extends Base {
     this.setAccelerationX(0)
   }
 
-  jump (timestamp) {
+  jump (timestamp?: number) {
     // TODO: Time based jump?
     if (!this.isHoldingJump && (this.body.blocked.down || this.body.touching.down)) {
       this.setState(PlayerState.jumpingUp)

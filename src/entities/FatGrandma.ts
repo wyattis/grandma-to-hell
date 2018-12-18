@@ -1,12 +1,12 @@
-import CacheKeys from "../types/CacheKeys"
-import BaseGrandma from "./BaseGrandma"
+import CacheKeys from '../types/CacheKeys'
+import BaseGrandma from './BaseGrandma'
 export const FatAnimKeys = {
   standing: 'fat-standing',
   bouncing: 'fat-bouncing'
 }
 export default class FatGrandma extends BaseGrandma {
-  constructor (scene, x, y) {
-    super(scene, x, y)
+  constructor (scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, CacheKeys.bigMaBounce)
     scene.anims.create({
       key: FatAnimKeys.bouncing,
       frames: scene.anims.generateFrameNumbers(CacheKeys.bigMaBounce, { start: 0, end: 11 }),
@@ -24,7 +24,7 @@ export default class FatGrandma extends BaseGrandma {
     this.body.offset.y += 1
   }
 
-  animationComplete (animation) {
+  animationComplete (animation: Phaser.Animations.Animation) {
     if (animation.key === FatAnimKeys.bouncing) {
       this.play(FatAnimKeys.standing, true)
     }
