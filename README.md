@@ -60,6 +60,9 @@ For development run `npm start` to start the dev server.For production `npm run 
 - Room transitions
 - Maybe add the concept of lives?
 - Keep states between each room (health, grandmas)
+- Grandmas interact with environment
+    - Turn around when hitting a wall
+    - Maybe talk with each other? ("That Sammy is something else!")
 - Sound effects
     - Fire
     - Jump
@@ -69,4 +72,6 @@ For development run `npm start` to start the dev server.For production `npm run 
     - Wall crumbling
     - Grandma noises ("I made pie!", "So cute, I could just squeeze him to death", etc)
 - Main theme?
-- Different entrances and exits
+- Separate entrances and exits
+
+- Consider rewrite with a real engine and a real release on real game platforms?
